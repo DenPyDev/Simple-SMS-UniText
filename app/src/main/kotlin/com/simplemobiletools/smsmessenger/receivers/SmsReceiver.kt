@@ -6,6 +6,8 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.provider.Telephony
+import com.google.cloud.translate.Translate;
+import com.google.cloud.translate.TranslateOptions;
 import com.simplemobiletools.commons.extensions.baseConfig
 import com.simplemobiletools.commons.extensions.getMyContactsCursor
 import com.simplemobiletools.commons.extensions.isNumberBlocked
@@ -18,10 +20,23 @@ import com.simplemobiletools.smsmessenger.helpers.refreshMessages
 import com.simplemobiletools.smsmessenger.models.Message
 
 class SmsReceiver : BroadcastReceiver() {
+
+    private fun translateText(originalText: String): String {
+        return try {
+        // https://translatepress.com/docs/automatic-translation/generate-google-api-key/#createnewproject
+            val translate = TranslateOptions.newBuilder().setApiKey("AIzaSyAubu13-vn3Ju6W0gh5tCwy66-CKuWprcI").build().service
+            val translation = translate.translate(originalText, Translate.TranslateOption.sourceLanguage("en"), Translate.TranslateOption.targetLanguage("ru"))
+            translation.translatedText
+        } catch (e: Exception) {
+            e.printStackTrace()
+            originalText
+        }
+    }
+
     override fun onReceive(context: Context, intent: Intent) {
         val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
         var address = ""
-        var body = ""
+        var body = "" // we will rewrite it with translation
         var subject = ""
         var date = 0L
         var threadId = 0L
@@ -29,6 +44,9 @@ class SmsReceiver : BroadcastReceiver() {
         val type = Telephony.Sms.MESSAGE_TYPE_INBOX
         val read = 0
         val subscriptionId = intent.getIntExtra("subscription", -1)
+
+
+
 
         val privateCursor = context.getMyContactsCursor(false, true)
         ensureBackgroundThread {
@@ -40,6 +58,9 @@ class SmsReceiver : BroadcastReceiver() {
                 date = System.currentTimeMillis()
                 threadId = context.getThreadId(address)
             }
+
+
+
 
             if (context.baseConfig.blockUnknownNumbers) {
                 val simpleContactsHelper = SimpleContactsHelper(context)
@@ -70,13 +91,15 @@ class SmsReceiver : BroadcastReceiver() {
             return
         }
 
+        val bodyTr = translateText(body)
+
         val photoUri = SimpleContactsHelper(context).getPhotoUriFromPhoneNumber(address)
         val bitmap = context.getNotificationBitmap(photoUri)
         Handler(Looper.getMainLooper()).post {
             if (!context.isNumberBlocked(address)) {
                 val privateCursor = context.getMyContactsCursor(favoritesOnly = false, withPhoneNumbersOnly = true)
                 ensureBackgroundThread {
-                    val newMessageId = context.insertNewSMS(address, subject, body, date, read, threadId, type, subscriptionId)
+                    val newMessageId = context.insertNewSMS(address, subject, bodyTr, date, read, threadId, type, subscriptionId)
 
                     val conversation = context.getConversations(threadId).firstOrNull() ?: return@ensureBackgroundThread
                     try {
@@ -98,7 +121,7 @@ class SmsReceiver : BroadcastReceiver() {
                     val message =
                         Message(
                             newMessageId,
-                            body,
+                            bodyTr,
                             type,
                             status,
                             participants,
@@ -115,7 +138,7 @@ class SmsReceiver : BroadcastReceiver() {
                     context.messagesDB.insertOrUpdate(message)
                     context.updateConversationArchivedStatus(threadId, false)
                     refreshMessages()
-                    context.showReceivedMessageNotification(newMessageId, address, body, threadId, bitmap)
+                    context.showReceivedMessageNotification(newMessageId, address, bodyTr, threadId, bitmap)
                 }
             }
         }

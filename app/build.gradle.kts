@@ -87,6 +87,8 @@ android {
         checkReleaseBuilds = false
         abortOnError = false
     }
+    packaging {
+        resources.excludes.add("META-INF/*")}
 }
 
 dependencies {
@@ -101,5 +103,7 @@ dependencies {
     implementation(libs.ez.vcard)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.bundles.room)
+    implementation("com.google.cloud:google-cloud-translate:2.6.0")
     ksp(libs.androidx.room.compiler)
 }
+
