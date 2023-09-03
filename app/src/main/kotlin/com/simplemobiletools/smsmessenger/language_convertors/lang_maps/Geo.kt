@@ -1,7 +1,7 @@
-package com.simplemobiletools.smsmessenger.receivers
+package com.simplemobiletools.smsmessenger.language_convertors.lang_maps
 
-public class SmsTranslator {
-    private val georgianMap = mapOf(
+object Geo {
+    val translitMap = mapOf(
         "a" to "ა",
         "b" to "ბ",
         "g" to "გ",
@@ -41,18 +41,5 @@ public class SmsTranslator {
         "h" to "ჰ",
         "--" to "—"
     )
-
-    fun transliterateToGeorgian(input: String): String {
-        var result = input
-        georgianMap.entries.sortedByDescending { it.key.length }.forEach { entry ->
-            result = result.replace(entry.key, entry.value)
-        }
-        return result
-    }
 }
 
-//    fun main() {
-//        val translator = SmsTranslator()
-//        val testString = "kotlins"
-//        println(translator.transliterateToGeorgian(testString))
-//    }

@@ -17,23 +17,25 @@ import com.simplemobiletools.commons.models.PhoneNumber
 import com.simplemobiletools.commons.models.SimpleContact
 import com.simplemobiletools.smsmessenger.extensions.*
 import com.simplemobiletools.smsmessenger.helpers.refreshMessages
+import com.simplemobiletools.smsmessenger.language_convertors.Transliterator
+import com.simplemobiletools.smsmessenger.language_convertors.lang_maps.Geo
 import com.simplemobiletools.smsmessenger.models.Message
 
 class SmsReceiver : BroadcastReceiver() {
 
     private fun translateText(originalText: String): String {
 
-        val transliterator = SmsTranslator()
-        val ge_text = transliterator.transliterateToGeorgian(originalText)
+        val transliterator = Transliterator()
+        val geText = transliterator.transliterate(originalText, Geo.translitMap)
 
         return try {
         // https://translatepress.com/docs/automatic-translation/generate-google-api-key/#createnewproject
             val translate = TranslateOptions.newBuilder().setApiKey("AIzaSyAubu13-vn3Ju6W0gh5tCwy66-CKuWprcI").build().service
-            val translation = translate.translate(ge_text, Translate.TranslateOption.sourceLanguage("ka"), Translate.TranslateOption.targetLanguage("ru"))
+            val translation = translate.translate(geText, Translate.TranslateOption.sourceLanguage("ka"), Translate.TranslateOption.targetLanguage("ru"))
             translation.translatedText
         } catch (e: Exception) {
             e.printStackTrace()
-            ge_text
+            geText
         }
     }
 
