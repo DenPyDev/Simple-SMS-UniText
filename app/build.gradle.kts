@@ -106,4 +106,3 @@ dependencies {
     implementation("com.google.cloud:google-cloud-translate:2.6.0")
     ksp(libs.androidx.room.compiler)
 }
-

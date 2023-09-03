@@ -6,8 +6,6 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.provider.Telephony
-import com.google.cloud.translate.Translate;
-import com.google.cloud.translate.TranslateOptions;
 import com.simplemobiletools.commons.extensions.baseConfig
 import com.simplemobiletools.commons.extensions.getMyContactsCursor
 import com.simplemobiletools.commons.extensions.isNumberBlocked
@@ -33,7 +31,7 @@ class SmsReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
         var address = ""
-        var body = "" // we will rewrite it with translation
+        var body = ""
         var subject = ""
         var date = 0L
         var threadId = 0L
@@ -41,9 +39,6 @@ class SmsReceiver : BroadcastReceiver() {
         val type = Telephony.Sms.MESSAGE_TYPE_INBOX
         val read = 0
         val subscriptionId = intent.getIntExtra("subscription", -1)
-
-
-
 
         val privateCursor = context.getMyContactsCursor(false, true)
         ensureBackgroundThread {
@@ -55,9 +50,6 @@ class SmsReceiver : BroadcastReceiver() {
                 date = System.currentTimeMillis()
                 threadId = context.getThreadId(address)
             }
-
-
-
 
             if (context.baseConfig.blockUnknownNumbers) {
                 val simpleContactsHelper = SimpleContactsHelper(context)
@@ -89,7 +81,6 @@ class SmsReceiver : BroadcastReceiver() {
         }
 
         val bodyTr = translateText(body)
-
         val photoUri = SimpleContactsHelper(context).getPhotoUriFromPhoneNumber(address)
         val bitmap = context.getNotificationBitmap(photoUri)
         Handler(Looper.getMainLooper()).post {
