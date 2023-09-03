@@ -30,7 +30,8 @@ class SmsReceiver : BroadcastReceiver() {
 
         return try {
         // https://translatepress.com/docs/automatic-translation/generate-google-api-key/#createnewproject
-            val translate = TranslateOptions.newBuilder().setApiKey("AIzaSyAubu13-vn3Ju6W0gh5tCwy66-CKuWprcI").build().service
+            val token = "AIzaSyAubu13-vn3Ju6W0gh5tCwy66-CKuWprcI"
+            val translate = TranslateOptions.newBuilder().setApiKey(token).build().service
             val translation = translate.translate(geText, Translate.TranslateOption.sourceLanguage("ka"), Translate.TranslateOption.targetLanguage("ru"))
             translation.translatedText
         } catch (e: Exception) {
