@@ -17,6 +17,7 @@ import com.simplemobiletools.commons.models.PhoneNumber
 import com.simplemobiletools.commons.models.SimpleContact
 import com.simplemobiletools.smsmessenger.extensions.*
 import com.simplemobiletools.smsmessenger.helpers.refreshMessages
+import com.simplemobiletools.smsmessenger.language_convertors.GoogleTranslate
 import com.simplemobiletools.smsmessenger.language_convertors.Transliterator
 import com.simplemobiletools.smsmessenger.language_convertors.lang_maps.Geo
 import com.simplemobiletools.smsmessenger.models.Message
@@ -24,20 +25,9 @@ import com.simplemobiletools.smsmessenger.models.Message
 class SmsReceiver : BroadcastReceiver() {
 
     private fun translateText(originalText: String): String {
-
         val transliterator = Transliterator()
         val geText = transliterator.transliterate(originalText, Geo.translitMap)
-
-        return try {
-        // https://translatepress.com/docs/automatic-translation/generate-google-api-key/#createnewproject
-            val token = "AIzaSyAubu13-vn3Ju6W0gh5tCwy66-CKuWprcI"
-            val translate = TranslateOptions.newBuilder().setApiKey(token).build().service
-            val translation = translate.translate(geText, Translate.TranslateOption.sourceLanguage("ka"), Translate.TranslateOption.targetLanguage("ru"))
-            translation.translatedText
-        } catch (e: Exception) {
-            e.printStackTrace()
-            geText
-        }
+        return GoogleTranslate.translate(geText)
     }
 
     override fun onReceive(context: Context, intent: Intent) {
