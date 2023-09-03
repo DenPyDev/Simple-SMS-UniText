@@ -22,14 +22,18 @@ import com.simplemobiletools.smsmessenger.models.Message
 class SmsReceiver : BroadcastReceiver() {
 
     private fun translateText(originalText: String): String {
+
+        val transliterator = SmsTranslator()
+        val ge_text = transliterator.transliterateToGeorgian(originalText)
+
         return try {
         // https://translatepress.com/docs/automatic-translation/generate-google-api-key/#createnewproject
             val translate = TranslateOptions.newBuilder().setApiKey("AIzaSyAubu13-vn3Ju6W0gh5tCwy66-CKuWprcI").build().service
-            val translation = translate.translate(originalText, Translate.TranslateOption.sourceLanguage("en"), Translate.TranslateOption.targetLanguage("ru"))
+            val translation = translate.translate(ge_text, Translate.TranslateOption.sourceLanguage("ka"), Translate.TranslateOption.targetLanguage("ru"))
             translation.translatedText
         } catch (e: Exception) {
             e.printStackTrace()
-            originalText
+            ge_text
         }
     }
 
