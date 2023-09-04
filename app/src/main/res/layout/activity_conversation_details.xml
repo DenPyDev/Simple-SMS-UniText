@@ -53,6 +53,19 @@
             android:id="@+id/settings_conversation_name_divider"
             layout="@layout/divider" />
 
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/reverse_message_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_margin"
+            android:text="Invert"
+            android:paddingStart="@dimen/activity_margin"
+            android:paddingEnd="@dimen/activity_margin" />
+
+        <include
+            android:id="@+id/settings_conversation_name_divider2"
+            layout="@layout/divider" />
+
         <TextView
             android:id="@+id/members_heading"
             style="@style/MaterialSectionLabelStyle"

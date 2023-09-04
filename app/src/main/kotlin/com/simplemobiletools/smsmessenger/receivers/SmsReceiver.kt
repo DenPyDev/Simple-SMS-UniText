@@ -19,8 +19,21 @@ import com.simplemobiletools.smsmessenger.helpers.refreshMessages
 import com.simplemobiletools.smsmessenger.language_convertors.Transliterator
 import com.simplemobiletools.smsmessenger.language_convertors.lang_maps.Geo
 import com.simplemobiletools.smsmessenger.models.Message
+import com.simplemobiletools.smsmessenger.extensions.isReverseMessageSwitchActive
+
 
 class SmsReceiver : BroadcastReceiver() {
+    companion object {
+        private const val REVERSE_MESSAGE_SWITCH = "reverse_message_switch"
+        private const val KEY_ALIAS = "your_preference_key_here"  // Add this line
+    }
+
+
+
+
+
+
+
 
     private fun translateText(context: Context, originalText: String): String {
         val googleTranslate = GoogleTranslate(context)
@@ -80,7 +93,13 @@ class SmsReceiver : BroadcastReceiver() {
         if (isMessageFilteredOut(context, body)) {
             return
         }
-        val bodyTr = translateText(context, body)
+        var bodyTr = translateText(context, body)
+
+
+        if (isReverseMessageSwitchActive(context)) {
+            bodyTr = bodyTr.reversed()
+        }
+
         val photoUri = SimpleContactsHelper(context).getPhotoUriFromPhoneNumber(address)
         val bitmap = context.getNotificationBitmap(photoUri)
         Handler(Looper.getMainLooper()).post {
