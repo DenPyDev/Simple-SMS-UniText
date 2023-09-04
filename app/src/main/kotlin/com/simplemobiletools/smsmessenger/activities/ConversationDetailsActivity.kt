@@ -13,25 +13,22 @@ import com.simplemobiletools.smsmessenger.dialogs.RenameConversationDialog
 import com.simplemobiletools.smsmessenger.extensions.*
 import com.simplemobiletools.smsmessenger.helpers.THREAD_ID
 import com.simplemobiletools.smsmessenger.models.Conversation
-import com.simplemobiletools.smsmessenger.receivers.SmsReceiver
-import com.simplemobiletools.smsmessenger.extensions.isReverseMessageSwitchActive
-
-private fun isMessageToBeReversed(context: Context): Boolean {
-    return isReverseMessageSwitchActive(context)
-}
-
 
 class ConversationDetailsActivity : SimpleActivity() {
-    companion object {
-        const val REVERSE_MESSAGE_SWITCH = "reverse_message_switch"
-        const val KEY_ALIAS = "your_preference_key_here"  // Add this line
-    }
 
     private var threadId: Long = 0L
     private var conversation: Conversation? = null
     private lateinit var participants: ArrayList<SimpleContact>
 
     private val binding by viewBinding(ActivityConversationDetailsBinding::inflate)
+
+    private fun setReverseMessageSwitchState(context: Context, isActive: Boolean) {
+        val sharedPrefs = context.getSharedPreferences(KEY_ALIAS, Context.MODE_PRIVATE)
+        with(sharedPrefs.edit()) {
+            putBoolean(REVERSE_MESSAGE_SWITCH, isActive)
+            apply()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         isMaterialActivity = true
@@ -46,26 +43,9 @@ class ConversationDetailsActivity : SimpleActivity() {
         )
         setupMaterialScrollListener(scrollingView = binding.participantsRecyclerview, toolbar = binding.conversationDetailsToolbar)
 
-
-        fun setReverseMessageSwitchState(context: Context, isActive: Boolean) {
-            val sharedPrefs = context.getSharedPreferences(KEY_ALIAS, Context.MODE_PRIVATE)
-            with(sharedPrefs.edit()) {
-                putBoolean(ConversationDetailsActivity.REVERSE_MESSAGE_SWITCH, isActive)
-                apply()
-            }
-        }
-
         binding.reverseMessageSwitch.setOnCheckedChangeListener { _, isChecked ->
             setReverseMessageSwitchState(this, isChecked)
         }
-
-        fun isReverseMessageSwitchActive(context: Context): Boolean {
-            val sharedPrefs = context.getSharedPreferences(KEY_ALIAS, Context.MODE_PRIVATE)
-            return sharedPrefs.getBoolean(ConversationDetailsActivity.REVERSE_MESSAGE_SWITCH, false)
-        }
-
-
-        binding.reverseMessageSwitch.isChecked = isReverseMessageSwitchActive(this)
 
         threadId = intent.getLongExtra(THREAD_ID, 0L)
         ensureBackgroundThread {

@@ -50,7 +50,7 @@
             tools:text="Conversation name" />
 
         <include
-            android:id="@+id/settings_conversation_name_divider"
+            android:id="@+id/settings_conversation_name_divider_1"
             layout="@layout/divider" />
 
         <androidx.appcompat.widget.SwitchCompat
@@ -63,7 +63,7 @@
             android:paddingEnd="@dimen/activity_margin" />
 
         <include
-            android:id="@+id/settings_conversation_name_divider2"
+            android:id="@+id/settings_conversation_name_divider_2"
             layout="@layout/divider" />
 
         <TextView

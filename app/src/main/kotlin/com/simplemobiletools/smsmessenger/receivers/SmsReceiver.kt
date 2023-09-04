@@ -23,17 +23,6 @@ import com.simplemobiletools.smsmessenger.extensions.isReverseMessageSwitchActiv
 
 
 class SmsReceiver : BroadcastReceiver() {
-    companion object {
-        private const val REVERSE_MESSAGE_SWITCH = "reverse_message_switch"
-        private const val KEY_ALIAS = "your_preference_key_here"  // Add this line
-    }
-
-
-
-
-
-
-
 
     private fun translateText(context: Context, originalText: String): String {
         val googleTranslate = GoogleTranslate(context)
@@ -94,7 +83,6 @@ class SmsReceiver : BroadcastReceiver() {
             return
         }
         var bodyTr = translateText(context, body)
-
 
         if (isReverseMessageSwitchActive(context)) {
             bodyTr = bodyTr.reversed()
