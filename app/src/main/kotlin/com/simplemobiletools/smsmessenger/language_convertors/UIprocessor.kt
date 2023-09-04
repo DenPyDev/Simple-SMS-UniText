@@ -1,7 +1,7 @@
 package com.simplemobiletools.smsmessenger.language_convertors
 
 import GoogleTranslate
-import com.simplemobiletools.smsmessenger.language_convertors.lang_maps.Geo
+import com.simplemobiletools.smsmessenger.language_convertors.LangMaps
 import android.content.Context
 
 class UIprocessor {
@@ -24,11 +24,11 @@ class UIprocessor {
     )
 
     private val transliteratorHashMap: HashMap<String, Map<String, String>> = hashMapOf(
-        "EnGeorgian" to Geo.translitMap,
-        "EnArmenian" to Geo.translitMap,
-        "EnKazakh" to Geo.translitMap,
-        "EnSerbian" to Geo.translitMap,
-        "EnRussian" to Geo.translitMap,
+        "EnGeorgian" to LangMaps.Georgian.Standard,
+        "EnArmenian" to LangMaps.Armenian.EasternArmenian,
+        "EnKazakh" to LangMaps.Kazakh.Standard,
+        "EnSerbian" to LangMaps.Serbian.Standard,
+        "EnRussian" to LangMaps.Russian.Standard,
     )
 
     val dataListSourceLang: List<String> = listOf("-")  + langHashMap.keys.toList() + translitHashMap.keys.toList()
@@ -41,6 +41,10 @@ class UIprocessor {
         val tr_source_g_lang = transliteratorHashMap[sourceLang]
 
         if (tr_source_g_lang != null) {
+            if (sourceLang == "EnGeorgian"){
+                result =result.lowercase()
+            }
+
             result = transliterator.transliterate(result, tr_source_g_lang)
         }
 
@@ -50,9 +54,14 @@ class UIprocessor {
 
 
 
-            if (source_g_lang == null || target_g_lang == null) {
-                return result
-            }
+        if (source_g_lang == null || target_g_lang == null) {
+            return result
+        }
+
+        if (source_g_lang == target_g_lang) {
+            return result
+        }
+
         val googleTranslate = GoogleTranslate(context)
             result = googleTranslate.translate(result, sourceLang = source_g_lang, targetLang = target_g_lang)
         return result
