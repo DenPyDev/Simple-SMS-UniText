@@ -54,11 +54,11 @@
             layout="@layout/divider" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/reverse_message_switch"
+            android:id="@+id/translate_message_switch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/small_margin"
-            android:text="Invert"
+            android:text="Translate"
             android:paddingStart="@dimen/activity_margin"
             android:paddingEnd="@dimen/activity_margin" />
 

@@ -22,10 +22,10 @@ class ConversationDetailsActivity : SimpleActivity() {
 
     private val binding by viewBinding(ActivityConversationDetailsBinding::inflate)
 
-    private fun setReverseMessageSwitchState(context: Context, isActive: Boolean) {
+    private fun setTranslateMessageSwitchState(context: Context, isActive: Boolean) {
         val sharedPrefs = context.getSharedPreferences(KEY_ALIAS, Context.MODE_PRIVATE)
         with(sharedPrefs.edit()) {
-            putBoolean(REVERSE_MESSAGE_SWITCH, isActive)
+            putBoolean(TRANSLATE_MESSAGE_SWITCH, isActive)
             apply()
         }
     }
@@ -43,8 +43,8 @@ class ConversationDetailsActivity : SimpleActivity() {
         )
         setupMaterialScrollListener(scrollingView = binding.participantsRecyclerview, toolbar = binding.conversationDetailsToolbar)
 
-        binding.reverseMessageSwitch.setOnCheckedChangeListener { _, isChecked ->
-            setReverseMessageSwitchState(this, isChecked)
+        binding.translateMessageSwitch.setOnCheckedChangeListener { _, isChecked ->
+            setTranslateMessageSwitchState(this, isChecked)
         }
 
         threadId = intent.getLongExtra(THREAD_ID, 0L)
