@@ -1,6 +1,5 @@
 package com.simplemobiletools.smsmessenger.receivers
 
-import GoogleTranslate
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -16,20 +15,27 @@ import com.simplemobiletools.commons.models.PhoneNumber
 import com.simplemobiletools.commons.models.SimpleContact
 import com.simplemobiletools.smsmessenger.extensions.*
 import com.simplemobiletools.smsmessenger.helpers.refreshMessages
-import com.simplemobiletools.smsmessenger.language_convertors.Transliterator
-import com.simplemobiletools.smsmessenger.language_convertors.lang_maps.Geo
+import com.simplemobiletools.smsmessenger.language_convertors.UIprocessor
 import com.simplemobiletools.smsmessenger.models.Message
-import com.simplemobiletools.smsmessenger.extensions.isTranslateMessageSwitchActive
 
 
 class SmsReceiver : BroadcastReceiver() {
 
     private fun translateText(context: Context, originalText: String): String {
-        val googleTranslate = GoogleTranslate(context)
-        val transliterator = Transliterator()
-        val geText = transliterator.transliterate(originalText, Geo.translitMap)
-        return googleTranslate.translate(geText)
+        val sharedPrefs = context.getSharedPreferences(KEY_ALIAS, Context.MODE_PRIVATE)
+
+        val proc = UIprocessor()
+        val sourceLang = sharedPrefs.getString(SELECTOR_SOURCE_LANG_VALUE, "")
+        val targetLang =  sharedPrefs.getString(SELECTOR_TARGET_LANG_VALUE, "")
+
+        return if (sourceLang != null && targetLang != null) {
+            proc.Process(context=context, sourceLang=sourceLang, targetLang=targetLang, text=originalText)
+        } else {
+            originalText
+        }
+
     }
+
 
     override fun onReceive(context: Context, intent: Intent) {
         val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
@@ -84,9 +90,10 @@ class SmsReceiver : BroadcastReceiver() {
         }
         var bodyTr = body
 
-        if (isTranslateMessageSwitchActive(context)) {
-            bodyTr = translateText(context, body)
-        }
+//        if (isTranslateMessageSwitchActive(context)) {
+//            bodyTr = translateText(context, body)
+//        }
+        bodyTr = translateText(context, body)
         val photoUri = SimpleContactsHelper(context).getPhotoUriFromPhoneNumber(address)
         val bitmap = context.getNotificationBitmap(photoUri)
         Handler(Looper.getMainLooper()).post {

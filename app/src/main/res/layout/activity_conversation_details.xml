@@ -66,6 +66,44 @@
             android:id="@+id/settings_conversation_name_divider_2"
             layout="@layout/divider" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_marginBottom="@dimen/small_margin">
+
+            <Spinner
+                android:id="@+id/selector_source_lang"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:scaleType="centerInside"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/activity_margin"
+                android:layout_marginEnd="@dimen/small_margin"
+                android:paddingStart="@dimen/activity_margin"
+                android:paddingEnd="@dimen/activity_margin" />
+
+            <Spinner
+                android:id="@+id/selector_target_lang"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:scaleType="centerInside"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/small_margin"
+                android:layout_marginEnd="@dimen/activity_margin"
+                android:paddingStart="@dimen/activity_margin"
+                android:paddingEnd="@dimen/activity_margin" />
+
+        </LinearLayout>
+
+        <include
+            android:id="@+id/settings_conversation_name_divider_3"
+            layout="@layout/divider" />
+
+
         <TextView
             android:id="@+id/members_heading"
             style="@style/MaterialSectionLabelStyle"
