@@ -121,16 +121,6 @@ class SettingsActivity : SimpleActivity() {
         }
     }
 
-//    private fun setupChangeAPIKey() {
-//        val googleTranslateInstance = GoogleTranslate(this)
-//
-//        binding.settingsGoogleApiKeyHolder.setOnClickListener {
-//            ChangeApiKeyDialog(this, googleTranslateInstance) { apiKey ->
-//                saveDocument.launch(apiKey)
-//            }
-//        }
-//    }
-
     private fun setupChangeAPIKey() {
         val googleTranslateInstance = GoogleTranslate(this) // Create an instance of GoogleTranslate
 

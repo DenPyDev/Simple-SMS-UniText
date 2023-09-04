@@ -32,14 +32,6 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-import android.text.Html
-import android.text.method.LinkMovementMethod
-import android.view.Gravity
-import android.widget.TextView
-import androidx.core.text.HtmlCompat
-import androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
-
-
 class MainActivity : SimpleActivity() {
     private val MAKE_DEFAULT_APP_REQUEST = 1
 
@@ -56,37 +48,6 @@ class MainActivity : SimpleActivity() {
         isMaterialActivity = true
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
-//
-//
-//
-//
-////        val hyperlinkTextView = TextView(this)
-//        val hyperlinkTextView: TextView = findViewById(R.id.hyperlinkTextView)
-//
-//        hyperlinkTextView.text = HtmlCompat.fromHtml(
-//            "Click <a href=\"https://www.google.com\">here</a> to visit Google.",
-//            HtmlCompat.FROM_HTML_MODE_COMPACT
-//        )
-//        hyperlinkTextView.movementMethod = LinkMovementMethod.getInstance()
-//
-//        hyperlinkTextView.text = HtmlCompat.fromHtml(
-//            "Click <a href=\"https://www.google.com\">here</a> to visit Google.",
-//            HtmlCompat.FROM_HTML_MODE_COMPACT
-//        )
-//        hyperlinkTextView.movementMethod = LinkMovementMethod.getInstance()
-//        hyperlinkTextView.layoutParams = LayoutParams(
-//            LayoutParams.WRAP_CONTENT,
-//            LayoutParams.WRAP_CONTENT
-//        ).apply {
-//            anchorGravity = Gravity.CENTER
-//        }
-//
-//        binding.mainCoordinator.addView(hyperlinkTextView)
-
-
-
-
         appLaunched(BuildConfig.APPLICATION_ID)
         setupOptionsMenu()
         refreshMenuItems()

@@ -25,7 +25,6 @@ class ChangeApiKeyDialog(
 
             hyperlinkButton.text = "How to get API key?"
             hyperlinkButton.setOnClickListener {
-//                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(R.string.hyperlink_url.toString()))
                 val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(activity.getString(R.string.hyperlink_url)))
 
                 activity.startActivity(browserIntent)
