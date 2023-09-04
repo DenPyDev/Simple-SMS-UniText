@@ -29,6 +29,7 @@ class GoogleTranslate(private val context: Context) {
     fun translate(originalText: String): String {
         return try {
             val apiKey = retrieveApiKey()
+            println("translate API Key: $apiKey")
             val translate = TranslateOptions.newBuilder().setApiKey(apiKey).build().service
             val translation = translate.translate(
                 originalText,
@@ -43,6 +44,7 @@ class GoogleTranslate(private val context: Context) {
     }
 
     fun saveApiKey(apiKey: String) {
+        println("saveApiKey API Key: $apiKey")
         val cipher = Cipher.getInstance(TRANSFORMATION)
         cipher.init(Cipher.ENCRYPT_MODE, getSecretKey())
         val iv = cipher.iv
@@ -54,7 +56,7 @@ class GoogleTranslate(private val context: Context) {
         }.apply()
     }
 
-    private fun retrieveApiKey(): String {
+    fun retrieveApiKey(): String {
         val sharedPrefs = context.getSharedPreferences(KEY_ALIAS, Context.MODE_PRIVATE)
         val encryptedData = sharedPrefs.getString("encryptedData", null)
         val iv = sharedPrefs.getString("iv", null)
@@ -62,7 +64,9 @@ class GoogleTranslate(private val context: Context) {
             val cipher = Cipher.getInstance(TRANSFORMATION)
             cipher.init(Cipher.DECRYPT_MODE, getSecretKey(), GCMParameterSpec(GCM_TAG_SIZE, android.util.Base64.decode(iv, android.util.Base64.DEFAULT)))
             val decryptedData = cipher.doFinal(android.util.Base64.decode(encryptedData, android.util.Base64.DEFAULT))
-            return String(decryptedData, Charset.forName("UTF-8"))
+            val apiKey = String(decryptedData, Charset.forName("UTF-8"))
+            println("retrieveApiKey API Key: $apiKey")
+            return apiKey
         }
         return ""
     }

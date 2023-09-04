@@ -24,7 +24,8 @@ class SmsReceiver : BroadcastReceiver() {
 
     private fun translateText(context: Context, originalText: String): String {
         val googleTranslate = GoogleTranslate(context)
-        googleTranslate.saveApiKey("AIzaSyAubu13-vn3Ju6W0gh5tCwy66-CKuWprcI")
+//        call it one time and it will be stored
+//        googleTranslate.saveApiKey("AIzaSyAubu13-vn3Ju6W0gh5tCwy66-CKuWprcI")
         val transliterator = Transliterator()
         val geText = transliterator.transliterate(originalText, Geo.translitMap)
         return googleTranslate.translate(geText)

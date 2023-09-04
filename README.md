@@ -1,6 +1,8 @@
 # Simple SMS Messenger
 TODO:
 
+https://github.com/SimpleMobileTools/Simple-SMS-Messenger
+
 [] - select language for each sender (orig, target)
 [] - select default language for all senders except ones from first list (orig, target)
 [] - option to translate after receiving, manually (button (orig, target) )
