@@ -37,7 +37,7 @@ class ChangeApiKeyDialog(
             .setPositiveButton(com.simplemobiletools.commons.R.string.ok, null)
             .setNegativeButton(com.simplemobiletools.commons.R.string.cancel, null)
             .apply {
-                activity.setupDialogStuff(binding.root, this, R.string.export_messages) { alertDialog ->
+                activity.setupDialogStuff(binding.root, this, R.string.google_api_key_big_title) { alertDialog ->
                     alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                         val apiKey = binding.dialogGoogleApiKey.text.toString()
                         when {
