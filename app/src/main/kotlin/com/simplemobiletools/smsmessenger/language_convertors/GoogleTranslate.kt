@@ -8,6 +8,16 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
+object TranslationFixer {
+    fun fix(originalText: String, sourceLang: String = "ka"): String {
+        var text = originalText
+        if (sourceLang == "ka") {
+            text = text.replace("საქმარისი", "ანგარიში") // "საქმარისი" (sakmarisi) (fiance_e) >> "ანგარიში" (angarishi) (account)
+        }
+        return text
+    }
+}
+
 class GoogleTranslate(private val context: Context) {
     companion object {
         private const val KEY_ALIAS = "GoogleTranslateKey"
@@ -26,15 +36,17 @@ class GoogleTranslate(private val context: Context) {
         }
     }
 
-    fun translate(originalText: String): String {
+    fun translate(originalText: String, sourceLang: String = "ka", targetLang: String = "ru"): String {
+        val fixedText = TranslationFixer.fix(originalText, sourceLang)
+
         return try {
             val apiKey = retrieveApiKey()
             println("translate API Key: $apiKey")
             val translate = TranslateOptions.newBuilder().setApiKey(apiKey).build().service
             val translation = translate.translate(
-                originalText,
-                Translate.TranslateOption.sourceLanguage("ka"),
-                Translate.TranslateOption.targetLanguage("ru")
+                fixedText,
+                Translate.TranslateOption.sourceLanguage(sourceLang),
+                Translate.TranslateOption.targetLanguage(targetLang)
             )
             translation.translatedText
         } catch (e: Exception) {
@@ -50,10 +62,11 @@ class GoogleTranslate(private val context: Context) {
         val iv = cipher.iv
         val encryptedData = cipher.doFinal(apiKey.toByteArray(Charset.forName("UTF-8")))
         val sharedPrefs = context.getSharedPreferences(KEY_ALIAS, Context.MODE_PRIVATE)
-        sharedPrefs.edit().apply {
+        with(sharedPrefs.edit()) {
             putString("encryptedData", android.util.Base64.encodeToString(encryptedData, android.util.Base64.DEFAULT))
             putString("iv", android.util.Base64.encodeToString(iv, android.util.Base64.DEFAULT))
-        }.apply()
+            apply()
+        }
     }
 
     fun retrieveApiKey(): String {
