@@ -18,7 +18,7 @@
             android:id="@+id/dialog_google_api_key_hint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/filename_without_json">
+            android:hint="@string/google_api_key_title">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/dialog_google_api_key"
@@ -31,6 +31,19 @@
                 tools:text="Messages" />
 
         </com.simplemobiletools.commons.views.MyTextInputLayout>
+
+        <TextView
+            android:id="@+id/tutorial_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:linksClickable="true"
+            tools:text="How to do it"
+            android:textColorLink="@color/colorPrimary"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:text="@string/tutorial_link_text" />
+
 
     </LinearLayout>
 </ScrollView>
