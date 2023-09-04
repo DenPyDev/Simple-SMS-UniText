@@ -1,5 +1,6 @@
 package com.simplemobiletools.smsmessenger.receivers
 
+import GoogleTranslate
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -15,17 +16,18 @@ import com.simplemobiletools.commons.models.PhoneNumber
 import com.simplemobiletools.commons.models.SimpleContact
 import com.simplemobiletools.smsmessenger.extensions.*
 import com.simplemobiletools.smsmessenger.helpers.refreshMessages
-import com.simplemobiletools.smsmessenger.language_convertors.GoogleTranslate
 import com.simplemobiletools.smsmessenger.language_convertors.Transliterator
 import com.simplemobiletools.smsmessenger.language_convertors.lang_maps.Geo
 import com.simplemobiletools.smsmessenger.models.Message
 
 class SmsReceiver : BroadcastReceiver() {
 
-    private fun translateText(originalText: String): String {
+    private fun translateText(context: Context, originalText: String): String {
+        val googleTranslate = GoogleTranslate(context)
+        googleTranslate.saveApiKey("AIzaSyAubu13-vn3Ju6W0gh5tCwy66-CKuWprcI")
         val transliterator = Transliterator()
         val geText = transliterator.transliterate(originalText, Geo.translitMap)
-        return GoogleTranslate.translate(geText)
+        return googleTranslate.translate(geText)
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -79,8 +81,7 @@ class SmsReceiver : BroadcastReceiver() {
         if (isMessageFilteredOut(context, body)) {
             return
         }
-
-        val bodyTr = translateText(body)
+        val bodyTr = translateText(context, body)
         val photoUri = SimpleContactsHelper(context).getPhotoUriFromPhoneNumber(address)
         val bitmap = context.getNotificationBitmap(photoUri)
         Handler(Looper.getMainLooper()).post {
