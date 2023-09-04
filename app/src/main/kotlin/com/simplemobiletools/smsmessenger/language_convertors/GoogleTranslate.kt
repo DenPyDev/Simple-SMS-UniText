@@ -7,6 +7,8 @@ import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
 
 object TranslationFixer {
     fun fix(originalText: String, sourceLang: String = "ka"): String {
@@ -86,9 +88,19 @@ class GoogleTranslate(private val context: Context) {
 
     private fun generateSecretKey() {
         val keyGenerator = KeyGenerator.getInstance("AES", ANDROID_KEYSTORE)
-        keyGenerator.init(AES_KEY_SIZE)
+
+        // Создаем KeyGenParameterSpec для настройки параметров генерации ключа
+        val keyGenParameterSpec = KeyGenParameterSpec.Builder(KEY_ALIAS, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
+            .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+            .setKeySize(AES_KEY_SIZE)
+            .setRandomizedEncryptionRequired(true)
+            .build()
+
+        keyGenerator.init(keyGenParameterSpec)
         keyGenerator.generateKey()
     }
+
 
     private fun getSecretKey(): SecretKey {
         return keyStore.getKey(KEY_ALIAS, null) as SecretKey
