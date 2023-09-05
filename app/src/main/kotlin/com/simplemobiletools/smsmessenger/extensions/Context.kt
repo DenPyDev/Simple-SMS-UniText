@@ -120,6 +120,7 @@ fun Context.getMessages(
             Message(
                 id,
                 body,
+                body + "tr",
                 type,
                 status,
                 ArrayList(participants),
@@ -220,6 +221,7 @@ fun Context.getMMS(threadId: Long? = null, getImageResolutions: Boolean = false,
             Message(
                 mmsId,
                 body,
+                body + "tr",
                 type,
                 status,
                 participants,
@@ -309,7 +311,9 @@ fun Context.getConversations(threadId: Long? = null, privateContacts: ArrayList<
         val isGroupConversation = phoneNumbers.size > 1
         val read = cursor.getIntValue(Threads.READ) == 1
         val archived = cursor.getIntValue(Threads.ARCHIVED) == 1
-        val conversation = Conversation(id, snippet, date.toInt(), read, title, photoUri, isGroupConversation, phoneNumbers.first(), isArchived = archived)
+        val sourceLang = ""
+        val targetLang = ""
+        val conversation = Conversation(id, snippet, date.toInt(), read, title, photoUri, isGroupConversation, phoneNumbers.first(), isArchived = archived, sourceLang=sourceLang, targetLang=targetLang)
         conversations.add(conversation)
     }
 
@@ -1050,7 +1054,9 @@ fun Context.createTemporaryThread(message: Message, threadId: Long = generateRan
         phoneNumber = addresses.first(),
         isScheduled = true,
         usesCustomTitle = cachedConv?.usesCustomTitle == true,
-        isArchived = false
+        isArchived = false,
+        sourceLang = "",
+        targetLang = ""
     )
     try {
         conversationsDB.insertOrUpdate(conversation)

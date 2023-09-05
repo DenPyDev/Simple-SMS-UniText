@@ -1709,6 +1709,7 @@ class ThreadActivity : SimpleActivity() {
         return Message(
             id = messageId,
             body = text,
+            bodyTranslated = text,
             type = MESSAGE_TYPE_QUEUED,
             status = STATUS_NONE,
             participants = participants,

@@ -14,7 +14,7 @@ import com.simplemobiletools.smsmessenger.interfaces.MessageAttachmentsDao
 import com.simplemobiletools.smsmessenger.interfaces.MessagesDao
 import com.simplemobiletools.smsmessenger.models.*
 
-@Database(entities = [Conversation::class, Attachment::class, MessageAttachment::class, Message::class, RecycleBinMessage::class], version = 8)
+@Database(entities = [Conversation::class, Attachment::class, MessageAttachment::class, Message::class, RecycleBinMessage::class], version = 10)
 @TypeConverters(Converters::class)
 abstract class MessagesDatabase : RoomDatabase() {
 
@@ -42,6 +42,7 @@ abstract class MessagesDatabase : RoomDatabase() {
                             .addMigrations(MIGRATION_5_6)
                             .addMigrations(MIGRATION_6_7)
                             .addMigrations(MIGRATION_7_8)
+                            .addMigrations(MIGRATION_8_9)
                             .build()
                     }
                 }
@@ -123,5 +124,24 @@ abstract class MessagesDatabase : RoomDatabase() {
                 }
             }
         }
+
+        private val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.apply {
+                    execSQL("ALTER TABLE messages ADD COLUMN body_translated TEXT NOT NULL DEFAULT ''")
+                }
+            }
+        }
+
+        private val MIGRATION_9_10 = object : Migration(9, 10) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.apply {
+                    execSQL("ALTER TABLE conversations ADD COLUMN source_lang TEXT NOT NULL DEFAULT ''")
+                    execSQL("ALTER TABLE conversations ADD COLUMN target_lang TEXT NOT NULL DEFAULT ''")
+                }
+            }
+        }
+
     }
 }
+

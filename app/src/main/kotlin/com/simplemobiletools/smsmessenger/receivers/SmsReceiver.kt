@@ -122,6 +122,7 @@ class SmsReceiver : BroadcastReceiver() {
                     val message =
                         Message(
                             newMessageId,
+                            body,
                             bodyTr,
                             type,
                             status,
