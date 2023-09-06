@@ -39,8 +39,8 @@ interface MessagesDao {
     @Query("SELECT messages.* FROM messages LEFT OUTER JOIN recycle_bin_messages ON messages.id = recycle_bin_messages.id WHERE recycle_bin_messages.id IS NULL AND thread_id = :threadId AND is_scheduled = 1")
     fun getScheduledThreadMessages(threadId: Long): List<Message>
 
-    @Query("SELECT * FROM messages WHERE id = :messageId")
-    fun getMessageById(messageId: Long): Message?
+    @Query("SELECT * FROM messages WHERE id = :id")
+    fun getMessageById(id: Long): Message
 
     @Query("SELECT * FROM messages WHERE thread_id = :threadId AND id = :messageId AND is_scheduled = 1")
     fun getScheduledMessageWithId(threadId: Long, messageId: Long): Message
