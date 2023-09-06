@@ -16,6 +16,7 @@ import android.provider.OpenableColumns
 import android.provider.Telephony.*
 import android.telephony.SubscriptionManager
 import android.text.TextUtils
+import android.util.Log
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -101,9 +102,33 @@ fun Context.getMessages(
         }
 
         val id = cursor.getLongValue(Sms._ID)
-        val body = cursor.getStringValue(Sms.BODY)
+
+
+//        var bTr = "$body-emptSMS"
+//        val messageFromDB = messagesDB.getMessageById(id)
+//        if (messageFromDB?.bodyTranslated?.isNotEmpty() == true) {
+//            bTr = messageFromDB.bodyTranslated
+//        }
+        val body = cursor.getStringValue(Sms.BODY) //SMS DB (for old SMS)
         val messageFromDB = messagesDB.getMessageById(id)
-        val bodyTranslated = messageFromDB?.bodyTranslated ?: "emptySMS"
+        val bodybd = messageFromDB?.body ?: ""    //APP DB (for new SMS)
+        val bodyTrbd = messageFromDB?.bodyTranslated ?: ""  //APP DB (for new SMS)
+
+        Log.d("TAG2", "=====================")
+        Log.d("TAG2", "id: $id")
+        Log.d("TAG2", "body: $body")
+        Log.d("TAG2", "bodybd: $bodybd")
+        Log.d("TAG2", "bodyTrbd: $bodyTrbd")
+        Log.d("TAG2", "=====================")
+
+        var bodyTranslated = messageFromDB?.bodyTranslated ?: ""
+
+        //so, in app we show bodyTranslated, if Translated == "" return body from SMS DB
+        if (bodyTranslated.isEmpty())
+        {
+            bodyTranslated = body
+        }
+
         val type = cursor.getIntValue(Sms.TYPE)
         val namePhoto = getNameAndPhotoFromPhoneNumber(senderNumber)
         val senderName = namePhoto.name
@@ -220,14 +245,12 @@ fun Context.getMMS(threadId: Long? = null, getImageResolutions: Boolean = false,
             senderPhotoUri = namePhoto.photoUri ?: ""
         }
 
-        val messageFromDB = messagesDB.getMessageById(mmsId)
-        val bodyTranslated = messageFromDB?.bodyTranslated ?: "emptyMMS"
 
         val message =
             Message(
                 mmsId,
                 body,
-                bodyTranslated,
+                "bodyTranslated",
                 type,
                 status,
                 participants,
