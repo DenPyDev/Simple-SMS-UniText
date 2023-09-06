@@ -1,12 +1,12 @@
 package com.simplemobiletools.smsmessenger.receivers
 
+import Processor
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.provider.Telephony
-import android.util.Log
 import com.simplemobiletools.commons.extensions.baseConfig
 import com.simplemobiletools.commons.extensions.getMyContactsCursor
 import com.simplemobiletools.commons.extensions.isNumberBlocked
@@ -16,12 +16,16 @@ import com.simplemobiletools.commons.models.PhoneNumber
 import com.simplemobiletools.commons.models.SimpleContact
 import com.simplemobiletools.smsmessenger.extensions.*
 import com.simplemobiletools.smsmessenger.helpers.refreshMessages
-import com.simplemobiletools.smsmessenger.language_convertors.UIprocessor
-import com.simplemobiletools.smsmessenger.models.Conversation
 import com.simplemobiletools.smsmessenger.models.Message
 
 
 class SmsReceiver : BroadcastReceiver() {
+
+    private fun translateText(context: Context, threadId: Long, text: String): String {
+        var conv = context.conversationsDB.getConversationWithThreadId(threadId)
+        val processor = Processor(context)
+        return processor.process(text=text, sourceLang=conv?.sourceLang, targetLang=conv?.targetLang)
+    }
 
     override fun onReceive(context: Context, intent: Intent) {
         val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
@@ -100,7 +104,8 @@ class SmsReceiver : BroadcastReceiver() {
                     val participant = SimpleContact(0, 0, senderName, photoUri, arrayListOf(phoneNumber), ArrayList(), ArrayList())
                     val participants = arrayListOf(participant)
                     val messageDate = (date / 1000).toInt()
-                    var bodyTranslated = body
+
+                    var bodyTranslated = translateText(context, threadId, body)
                     val message =
                         Message(
                             newMessageId,

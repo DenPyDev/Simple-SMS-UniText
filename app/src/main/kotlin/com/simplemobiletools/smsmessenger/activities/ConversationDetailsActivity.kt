@@ -26,8 +26,11 @@ class ConversationDetailsActivity : SimpleActivity() {
 
     private val binding by viewBinding(ActivityConversationDetailsBinding::inflate)
 
-    private val dataListSourceLang: List<String?> = mutableListOf(null, "en", "ka", "en_ka", "ar", "en_ar", "kz", "en_kz", "srb", "en_srb", "ru", "en_ru", "arab", "йцуйцу")
-    private val dataListTargetLang: List<String?> = mutableListOf(null, "en", "ka", "ar", "kz", "srb", "ru", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab")
+//    private val sourceSpinnerList: List<String?> = mutableListOf(null, "en", "ka", "en_ka", "ar", "en_ar", "kz", "en_kz", "srb", "en_srb", "ru", "en_ru", "arab", "йцуйцу")
+//    private val targetSpinnerList: List<String?> = mutableListOf(null, "en", "ka", "ar", "kz", "srb", "ru", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab")
+
+    private val sourceSpinnerList: List<String?> = listOf(null) + LanguageConfig.possibleSources
+    private val targetSpinnerList: List<String?> = listOf(null) + LanguageConfig.possibleTargets
 
     override fun onCreate(savedInstanceState: Bundle?) {
         isMaterialActivity = true
@@ -85,13 +88,13 @@ class ConversationDetailsActivity : SimpleActivity() {
 
     private fun setupSpinners() {
 
-        setupSpinner(binding.spinnerSourceLang, dataListSourceLang, conversation?.sourceLang) { selectedLang ->
+        setupSpinner(binding.spinnerSourceLang, sourceSpinnerList, conversation?.sourceLang) { selectedLang ->
             ensureBackgroundThread {
                 conversation = changeConversationSourceLang(conversation!!, selectedLang)
             }
         }
 
-        setupSpinner(binding.spinnerTargetLang, dataListTargetLang, conversation?.targetLang) { selectedLang ->
+        setupSpinner(binding.spinnerTargetLang, targetSpinnerList, conversation?.targetLang) { selectedLang ->
             ensureBackgroundThread {
                 conversation = changeConversationTargetLang(conversation!!, selectedLang)
             }

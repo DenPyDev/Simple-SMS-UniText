@@ -1,15 +1,12 @@
-package com.simplemobiletools.smsmessenger.language_convertors
+package com.simplemobiletools.smsmessenger.languages
 
 class Transliterator {
 
     private val specialChars = listOf('%', '#', '^', '&', '*', '~', '_', ':', '@', '$', '+', '=')
 
-    private fun generateRandomString(length: Int): String {
-        return (1..length).map { specialChars.random() }.joinToString("")
-    }
+    private fun generateRandomString(length: Int): String = (1..length).map { specialChars.random() }.joinToString("")
 
     fun transliterate(input: String, translitMap: Map<String, String>): String {
-
         val placeholder = generateRandomString(10)
 
         val urlPattern = """(https?://\S+|www\.\S+|\S+\.\S+)""".toRegex()
@@ -36,9 +33,10 @@ class Transliterator {
     }
 }
 
-//import com.simplemobiletools.smsmessenger.language_convertors.lang_maps.Geo
+// Sample Usage (if needed)
+//import com.simplemobiletools.smsmessenger.language_convertors.TransliterationMaps.Armenian
 //fun main() {
 //    val translator = Transliterator()
 //    val testString = "kotlins"
-//    println(translator.transliterate(testString, Geo.translitMap))
+//    println(translator.transliterate(testString, Armenian.Eastern))
 //}

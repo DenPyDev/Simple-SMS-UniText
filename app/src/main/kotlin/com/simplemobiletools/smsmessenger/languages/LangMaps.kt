@@ -1,7 +1,6 @@
-package com.simplemobiletools.smsmessenger.language_convertors
+package com.simplemobiletools.smsmessenger.languages
 
-class LangMaps {
-
+class TransliterationMaps {
 
     object Armenian {
         val EasternArmenian = mapOf(
