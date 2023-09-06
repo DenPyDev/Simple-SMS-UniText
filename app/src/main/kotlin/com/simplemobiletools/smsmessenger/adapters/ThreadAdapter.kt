@@ -55,6 +55,7 @@ import com.simplemobiletools.smsmessenger.models.ThreadItem.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ThreadAdapter(
     activity: SimpleActivity,
@@ -177,23 +178,28 @@ class ThreadAdapter(
         return processor.process(text=text, sourceLang=conv?.sourceLang, targetLang=conv?.targetLang)
     }
 
-
     private fun performTranslateSelected() {
-        val messagesToTranslate = getSelectedItems().filterIsInstance<Message>()
-        if (messagesToTranslate.isNotEmpty()) {
-            CoroutineScope(Dispatchers.IO).launch {
-                for (message in messagesToTranslate) {
-                    val context = activity
+        CoroutineScope(Dispatchers.IO).launch {
+            val messagesToTranslate = getSelectedItems().filterIsInstance<Message>()
+            val updatedMessages = ArrayList<ThreadItem>()
+
+            for (message in messagesToTranslate) {
+                val context = activity
                     val threadId = message.threadId
                     val copiedText = message.body
                     Log.d("performTranslateSelected", copiedText)
                     val translatedText = translateText(context, threadId, copiedText)
                     val updatedMessage = message.copy(bodyTranslated = translatedText)
                     context.messagesDB.insertOrUpdate(updatedMessage)
-                }
+                    updatedMessages.add(updatedMessage)
+            }
+            withContext(Dispatchers.Main) {
+                updateMessages(updatedMessages)
             }
         }
     }
+
+
 
     private fun copyToClipboard() {
         val selectedMessages = getSelectedItems().filterIsInstance<Message>()
