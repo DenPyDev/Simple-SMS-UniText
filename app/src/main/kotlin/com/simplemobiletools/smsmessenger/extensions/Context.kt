@@ -104,31 +104,21 @@ fun Context.getMessages(
         val id = cursor.getLongValue(Sms._ID)
 
 
-//        var bTr = "$body-emptSMS"
-//        val messageFromDB = messagesDB.getMessageById(id)
-//        if (messageFromDB?.bodyTranslated?.isNotEmpty() == true) {
-//            bTr = messageFromDB.bodyTranslated
-//        }
         val body = cursor.getStringValue(Sms.BODY) //SMS DB (for old SMS)
         val messageFromDB = messagesDB.getMessageById(id)
-        val bodybd = messageFromDB?.body ?: ""    //APP DB (for new SMS)
-        val bodyTrbd = messageFromDB?.bodyTranslated ?: ""  //APP DB (for new SMS)
+        var bodyTranslated = messageFromDB?.bodyTranslated ?: ""
 
         Log.d("TAG2", "=====================")
         Log.d("TAG2", "id: $id")
-        Log.d("TAG2", "body: $body")
-        Log.d("TAG2", "bodybd: $bodybd")
-        Log.d("TAG2", "bodyTrbd: $bodyTrbd")
+        Log.d("TAG2", "body(sms):\n\t ${body.replace("\n", "\n\t")}")
+        Log.d("TAG2", "body(db):\n\t ${messageFromDB?.body?.replace("\n", "\n\t") ?: ""}")
+        Log.d("TAG2", "bodyTranslated(db)\n\t ${bodyTranslated.replace("\n", "\n\t")}")
         Log.d("TAG2", "=====================")
 
-        var bodyTranslated = messageFromDB?.bodyTranslated ?: ""
-
-        //so, in app we show bodyTranslated, if Translated == "" return body from SMS DB
-        if (bodyTranslated.isEmpty())
-        {
+        // Use body from SMS DB if bodyTranslated is empty
+        if (bodyTranslated.isEmpty()) {
             bodyTranslated = body
         }
-
         val type = cursor.getIntValue(Sms.TYPE)
         val namePhoto = getNameAndPhotoFromPhoneNumber(senderNumber)
         val senderName = namePhoto.name
