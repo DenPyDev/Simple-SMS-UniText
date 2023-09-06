@@ -56,6 +56,20 @@ val Context.messagingUtils get() = MessagingUtils(this)
 
 val Context.smsSender get() = SmsSender.getInstance(applicationContext as Application)
 
+
+fun Context.getBodyTranslated(messageId: Long): String {
+    return try {
+        val message = messagesDB.getMessageById(messageId) // Assuming you have this method in your DAO
+        message?.bodyTranslated ?: ""
+    } catch (e: Exception) {
+        // Handle the exception or log it
+        ""
+    }
+}
+
+
+
+
 fun Context.getMessages(
     threadId: Long,
     getImageResolutions: Boolean,
@@ -99,8 +113,10 @@ fun Context.getMessages(
             return@queryCursor
         }
 
+
         val id = cursor.getLongValue(Sms._ID)
         val body = cursor.getStringValue(Sms.BODY)
+        val bodyTranslated = getBodyTranslated(id)
         val type = cursor.getIntValue(Sms.TYPE)
         val namePhoto = getNameAndPhotoFromPhoneNumber(senderNumber)
         val senderName = namePhoto.name
@@ -120,7 +136,7 @@ fun Context.getMessages(
             Message(
                 id,
                 body,
-                body + "tr",
+                bodyTranslated, //show in message list
                 type,
                 status,
                 ArrayList(participants),
@@ -221,7 +237,7 @@ fun Context.getMMS(threadId: Long? = null, getImageResolutions: Boolean = false,
             Message(
                 mmsId,
                 body,
-                body + "tr",
+                body + "-tr-mms2",
                 type,
                 status,
                 participants,
@@ -595,6 +611,25 @@ fun Context.getNameAndPhotoFromPhoneNumber(number: String): NamePhoto {
 
     return NamePhoto(number, null)
 }
+
+//fun Context.getBodyTranslated(smsId:Int): translated_body {
+//
+//
+//    val uri = Uri.withAppendedPath(Sms.CONTENT_URI,  smsId.toString())
+//
+//    try {
+//        val cursor = contentResolver.query(uri, id=smsId, null, null, null)
+//        cursor.use {
+//            if (cursor?.moveToFirst() == true) {
+//                val name = cursor.getStringValue(PhoneLookup.)
+//                return NamePhoto(name, photoUri)
+//            }
+//        }
+//    } catch (e: Exception) {
+//    }
+//
+//    return
+//}
 
 fun Context.insertNewSMS(
     address: String,

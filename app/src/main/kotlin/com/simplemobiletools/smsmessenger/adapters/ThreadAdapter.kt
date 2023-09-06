@@ -165,7 +165,7 @@ class ThreadAdapter(
 
     private fun copyToClipboard() {
         val firstItem = getSelectedItems().firstOrNull() as? Message ?: return
-        activity.copyToClipboard(firstItem.body)
+        activity.copyToClipboard(firstItem.bodyTranslated.toString())
     }
 
     private fun saveAs() {
@@ -176,7 +176,7 @@ class ThreadAdapter(
 
     private fun shareText() {
         val firstItem = getSelectedItems().firstOrNull() as? Message ?: return
-        activity.shareTextIntent(firstItem.body)
+        activity.shareTextIntent(firstItem.bodyTranslated.toString())
     }
 
     private fun selectText() {
@@ -276,7 +276,8 @@ class ThreadAdapter(
         ItemMessageBinding.bind(view).apply {
             threadMessageHolder.isSelected = selectedKeys.contains(message.hashCode())
             threadMessageBody.apply {
-                text = message.body
+//                text = message.body
+                text = message.bodyTranslated
                 setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
                 beVisibleIf(message.body.isNotEmpty())
                 setOnLongClickListener {

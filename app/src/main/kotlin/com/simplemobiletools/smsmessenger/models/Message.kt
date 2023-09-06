@@ -10,7 +10,7 @@ import com.simplemobiletools.commons.models.SimpleContact
 data class Message(
     @PrimaryKey val id: Long,
     @ColumnInfo(name = "body") val body: String,
-    @ColumnInfo(name = "body_translated") val bodyTranslated: String,
+    @ColumnInfo(name = "body_translated") val bodyTranslated: String?,
     @ColumnInfo(name = "type") val type: Int,
     @ColumnInfo(name = "status") val status: Int,
     @ColumnInfo(name = "participants") val participants: ArrayList<SimpleContact>,

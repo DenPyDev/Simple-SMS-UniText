@@ -88,19 +88,14 @@ class SmsReceiver : BroadcastReceiver() {
         if (isMessageFilteredOut(context, body)) {
             return
         }
-        var bodyTr = body
-
-//        if (isTranslateMessageSwitchActive(context)) {
-//            bodyTr = translateText(context, body)
-//        }
-        bodyTr = translateText(context, body)
+        var bodyTranslated = translateText(context, body)
         val photoUri = SimpleContactsHelper(context).getPhotoUriFromPhoneNumber(address)
         val bitmap = context.getNotificationBitmap(photoUri)
         Handler(Looper.getMainLooper()).post {
             if (!context.isNumberBlocked(address)) {
                 val privateCursor = context.getMyContactsCursor(favoritesOnly = false, withPhoneNumbersOnly = true)
                 ensureBackgroundThread {
-                    val newMessageId = context.insertNewSMS(address, subject, bodyTr, date, read, threadId, type, subscriptionId)
+                    val newMessageId = context.insertNewSMS(address, subject, body, date, read, threadId, type, subscriptionId)
 
                     val conversation = context.getConversations(threadId).firstOrNull() ?: return@ensureBackgroundThread
                     try {
@@ -123,7 +118,7 @@ class SmsReceiver : BroadcastReceiver() {
                         Message(
                             newMessageId,
                             body,
-                            bodyTr,
+                            bodyTranslated,
                             type,
                             status,
                             participants,
@@ -140,7 +135,7 @@ class SmsReceiver : BroadcastReceiver() {
                     context.messagesDB.insertOrUpdate(message)
                     context.updateConversationArchivedStatus(threadId, false)
                     refreshMessages()
-                    context.showReceivedMessageNotification(newMessageId, address, bodyTr, threadId, bitmap)
+                    context.showReceivedMessageNotification(newMessageId, address, bodyTranslated, threadId, bitmap)
                 }
             }
         }
