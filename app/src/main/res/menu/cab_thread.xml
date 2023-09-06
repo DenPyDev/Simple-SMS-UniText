@@ -6,7 +6,7 @@
 
     <item
         android:id="@+id/cab_translate"
-        android:icon="@drawable/ic_flag_welsh_vector"
+        android:icon="@android:drawable/ic_menu_myplaces"
         android:showAsAction="always"
         android:title="translate_selected"
         app:showAsAction="always" />

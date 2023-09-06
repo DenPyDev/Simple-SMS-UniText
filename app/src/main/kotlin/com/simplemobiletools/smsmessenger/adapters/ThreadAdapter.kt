@@ -1,6 +1,8 @@
 package com.simplemobiletools.smsmessenger.adapters
 
+import Processor
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
@@ -50,6 +52,9 @@ import com.simplemobiletools.smsmessenger.models.Attachment
 import com.simplemobiletools.smsmessenger.models.Message
 import com.simplemobiletools.smsmessenger.models.ThreadItem
 import com.simplemobiletools.smsmessenger.models.ThreadItem.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class ThreadAdapter(
     activity: SimpleActivity,
@@ -166,17 +171,26 @@ class ThreadAdapter(
         }
     }
 
+    private suspend fun translateText(context: Context, threadId: Long, text: String): String {
+        val conv = context.conversationsDB.getConversationWithThreadId(threadId)
+        val processor = Processor(context)
+        return processor.process(text=text, sourceLang=conv?.sourceLang, targetLang=conv?.targetLang)
+    }
+
+
     private fun performTranslateSelected() {
         val messagesToTranslate = getSelectedItems().filterIsInstance<Message>()
         if (messagesToTranslate.isNotEmpty()) {
-            for (message in messagesToTranslate) {
-                val context = activity
-                val threadId = message.threadId
-                val copiedText = message.body
-                Log.d("performTranslateSelected", copiedText)
-                // val translatedText = translateText(context, threadId, copiedText)
-//                val updatedMessage = message.copy(bodyTranslated = "")
-//                context.messagesDB.insertOrUpdate(updatedMessage)
+            CoroutineScope(Dispatchers.IO).launch {
+                for (message in messagesToTranslate) {
+                    val context = activity
+                    val threadId = message.threadId
+                    val copiedText = message.body
+                    Log.d("performTranslateSelected", copiedText)
+                    val translatedText = translateText(context, threadId, copiedText)
+                    val updatedMessage = message.copy(bodyTranslated = translatedText)
+                    context.messagesDB.insertOrUpdate(updatedMessage)
+                }
             }
         }
     }
