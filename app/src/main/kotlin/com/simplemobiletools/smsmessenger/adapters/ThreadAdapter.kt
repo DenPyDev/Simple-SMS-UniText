@@ -76,7 +76,8 @@ class ThreadAdapter(
         val selectedItem = getSelectedItems().firstOrNull() as? Message
         val hasText = selectedItem?.body != null && selectedItem.body != ""
         menu.apply {
-            findItem(R.id.cab_copy_to_clipboard).isVisible = isOneItemSelected && hasText
+            findItem(R.id.cab_copy_to_clipboard).isVisible = hasText
+//            findItem(R.id.cab_copy_to_clipboard).isVisible = isOneItemSelected && hasText
             findItem(R.id.cab_save_as).isVisible = isOneItemSelected && selectedItem?.attachment?.attachments?.size == 1
             findItem(R.id.cab_share).isVisible = isOneItemSelected && hasText
             findItem(R.id.cab_forward_message).isVisible = isOneItemSelected
@@ -92,6 +93,7 @@ class ThreadAdapter(
         }
 
         when (id) {
+            R.id.cab_translate -> performTranslateSelected()
             R.id.cab_copy_to_clipboard -> copyToClipboard()
             R.id.cab_save_as -> saveAs()
             R.id.cab_share -> shareText()
@@ -164,9 +166,25 @@ class ThreadAdapter(
         }
     }
 
+    private fun performTranslateSelected() {
+        val messagesToTranslate = getSelectedItems().filterIsInstance<Message>()
+        if (messagesToTranslate.isNotEmpty()) {
+            for (message in messagesToTranslate) {
+                val context = activity
+                val threadId = message.threadId
+                val copiedText = message.body
+                Log.d("performTranslateSelected", copiedText)
+                // val translatedText = translateText(context, threadId, copiedText)
+//                val updatedMessage = message.copy(bodyTranslated = "")
+//                context.messagesDB.insertOrUpdate(updatedMessage)
+            }
+        }
+    }
+
     private fun copyToClipboard() {
-        val firstItem = getSelectedItems().firstOrNull() as? Message ?: return
-        activity.copyToClipboard(firstItem.bodyTranslated)
+        val selectedMessages = getSelectedItems().filterIsInstance<Message>()
+        val combinedText = selectedMessages.joinToString("\n\n") { it.bodyTranslated }
+        activity.copyToClipboard(combinedText)
     }
 
     private fun saveAs() {
