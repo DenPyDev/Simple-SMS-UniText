@@ -1,5 +1,6 @@
 package com.simplemobiletools.smsmessenger.adapters
 
+import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.os.Parcelable
 import android.util.TypedValue
@@ -110,6 +111,7 @@ abstract class BaseConversationsAdapter(
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setupView(view: View, conversation: Conversation) {
         ItemConversationBinding.bind(view).apply {
             root.setupViewBackground(activity)
@@ -128,7 +130,8 @@ abstract class BaseConversationsAdapter(
             }
 
             conversationBodyShort.apply {
-                text = smsDraft ?: conversation.snippet
+//                text = smsDraft ?: conversation.snippet
+                text = "111 " + (smsDraft ?: conversation.snippet)
                 setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize * 0.9f)
             }
 

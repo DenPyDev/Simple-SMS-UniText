@@ -4,11 +4,12 @@ TODO:
 https://github.com/SimpleMobileTools/Simple-SMS-Messenger
 
 [+] - select language for each sender (orig, target)
+[+] - select target language "original" to return to original lang
 [] - select default language for all NEW senders except ones from first list (orig, target)
-[] - option to translate after receiving, manually (button (orig, target) )
+[+-] - option to translate after receiving, manually (button (orig, target) ) // add screen refresh
 [+] - save sms with their original text and their translation
 [+] - select multiply
-[ ] - target spinner - show original
+[+] - show translated in preview sms list
 issues
 [] - in first run i guess all messages in SMS db treated as new? and writing to APP db is is normal?
 

@@ -198,7 +198,7 @@ class ThreadAdapter(
                 context.messagesDB.insertOrUpdate(updatedMessage)
                 updatedMessages.add(updatedMessage)
             }
-
+//            notifyDataSetChanged()
 //            updatedMessages.forEach { message ->
 //                context.moveMessageToRecycleBin(message.id)
 //            }
@@ -207,6 +207,7 @@ class ThreadAdapter(
 //                context.restoreMessageFromRecycleBin(message.id)
 //            }
         }
+//        notifyDataSetChanged()
     }
 
 //    private fun performTranslateSelected() {
