@@ -1384,7 +1384,6 @@ class ThreadActivity : SimpleActivity() {
     private fun sendNormalMessage(text: String, subscriptionId: Int) {
         val addresses = participants.getAddresses()
         val attachments = buildMessageAttachments()
-
         try {
             refreshedSinceSent = false
             sendMessageCompat(text, addresses, subscriptionId, attachments, messageToResend)
@@ -1393,7 +1392,7 @@ class ThreadActivity : SimpleActivity() {
                 val messages = getMessages(threadId, getImageResolutions = true, limit = maxOf(1, attachments.size))
                     .filter { it.id !in messageIds }
                 for (message in messages) {
-                    insertOrUpdateMessage(message)
+                    insertOrUpdateMessage(message.copy(bodyTranslated = message.body))
                 }
             }
             clearCurrentMessage()
@@ -1709,7 +1708,7 @@ class ThreadActivity : SimpleActivity() {
         return Message(
             id = messageId,
             body = text,
-            bodyTranslated = text, //its my message
+            bodyTranslated = text,
             type = MESSAGE_TYPE_QUEUED,
             status = STATUS_NONE,
             participants = participants,
