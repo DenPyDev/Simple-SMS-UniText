@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.provider.Telephony
+import android.util.Log
 import com.simplemobiletools.commons.extensions.baseConfig
 import com.simplemobiletools.commons.extensions.getMyContactsCursor
 import com.simplemobiletools.commons.extensions.isNumberBlocked
@@ -16,26 +17,11 @@ import com.simplemobiletools.commons.models.SimpleContact
 import com.simplemobiletools.smsmessenger.extensions.*
 import com.simplemobiletools.smsmessenger.helpers.refreshMessages
 import com.simplemobiletools.smsmessenger.language_convertors.UIprocessor
+import com.simplemobiletools.smsmessenger.models.Conversation
 import com.simplemobiletools.smsmessenger.models.Message
 
 
 class SmsReceiver : BroadcastReceiver() {
-
-    private fun translateText(context: Context, originalText: String): String {
-        val sharedPrefs = context.getSharedPreferences(KEY_ALIAS, Context.MODE_PRIVATE)
-
-        val proc = UIprocessor()
-        val sourceLang = sharedPrefs.getString(SELECTOR_SOURCE_LANG_VALUE, "")
-        val targetLang =  sharedPrefs.getString(SELECTOR_TARGET_LANG_VALUE, "")
-
-        return if (sourceLang != null && targetLang != null) {
-            proc.Process(context=context, sourceLang=sourceLang, targetLang=targetLang, text=originalText)
-        } else {
-            originalText
-        }
-
-    }
-
 
     override fun onReceive(context: Context, intent: Intent) {
         val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
@@ -88,7 +74,6 @@ class SmsReceiver : BroadcastReceiver() {
         if (isMessageFilteredOut(context, body)) {
             return
         }
-        var bodyTranslated = translateText(context, body)
         val photoUri = SimpleContactsHelper(context).getPhotoUriFromPhoneNumber(address)
         val bitmap = context.getNotificationBitmap(photoUri)
         Handler(Looper.getMainLooper()).post {
@@ -96,6 +81,8 @@ class SmsReceiver : BroadcastReceiver() {
                 val privateCursor = context.getMyContactsCursor(favoritesOnly = false, withPhoneNumbersOnly = true)
                 ensureBackgroundThread {
                     val newMessageId = context.insertNewSMS(address, subject, body, date, read, threadId, type, subscriptionId)
+
+
 
                     val conversation = context.getConversations(threadId).firstOrNull() ?: return@ensureBackgroundThread
                     try {
@@ -113,7 +100,7 @@ class SmsReceiver : BroadcastReceiver() {
                     val participant = SimpleContact(0, 0, senderName, photoUri, arrayListOf(phoneNumber), ArrayList(), ArrayList())
                     val participants = arrayListOf(participant)
                     val messageDate = (date / 1000).toInt()
-
+                    var bodyTranslated = body
                     val message =
                         Message(
                             newMessageId,

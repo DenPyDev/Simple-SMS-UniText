@@ -2,6 +2,7 @@ package com.simplemobiletools.smsmessenger.messaging
 
 import android.content.Context
 import android.telephony.SmsMessage
+import android.util.Log
 import android.widget.Toast.LENGTH_LONG
 import com.klinker.android.send_message.Settings
 import com.simplemobiletools.commons.extensions.showErrorToast
@@ -69,6 +70,7 @@ fun Context.sendMessageCompat(text: String, addresses: List<String>, subId: Int?
                 )
             }
         } catch (e: Exception) {
+            Log.d("showErrorToast", e.toString())
             showErrorToast(e)
         }
     }

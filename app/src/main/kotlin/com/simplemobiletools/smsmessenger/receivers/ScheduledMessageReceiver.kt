@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
+import android.util.Log
 import com.simplemobiletools.commons.extensions.showErrorToast
 import com.simplemobiletools.commons.helpers.ensureBackgroundThread
 import com.simplemobiletools.smsmessenger.extensions.conversationsDB
@@ -53,8 +54,10 @@ class ScheduledMessageReceiver : BroadcastReceiver() {
             context.conversationsDB.deleteThreadId(messageId)
             refreshMessages()
         } catch (e: Exception) {
+            Log.d("showErrorToast",e.toString())
             context.showErrorToast(e)
         } catch (e: Error) {
+            Log.d("showErrorToast",e.localizedMessage ?: context.getString(com.simplemobiletools.commons.R.string.unknown_error_occurred))
             context.showErrorToast(e.localizedMessage ?: context.getString(com.simplemobiletools.commons.R.string.unknown_error_occurred))
         }
     }

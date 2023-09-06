@@ -1,6 +1,7 @@
 package com.simplemobiletools.smsmessenger.helpers
 
 import android.net.Uri
+import android.util.Log
 import android.util.Xml
 import com.simplemobiletools.commons.extensions.showErrorToast
 import com.simplemobiletools.commons.extensions.toast
@@ -33,6 +34,7 @@ class MessagesImporter(private val activity: SimpleActivity) {
                 importJson(uri)
             }
         } catch (e: Exception) {
+            Log.d("showErrorToast",e.toString())
             activity.showErrorToast(e)
         }
     }
@@ -54,6 +56,7 @@ class MessagesImporter(private val activity: SimpleActivity) {
         } catch (e: IllegalArgumentException) {
             activity.toast(com.simplemobiletools.commons.R.string.invalid_file_format)
         } catch (e: Exception) {
+            Log.d("showErrorToast",e.toString())
             activity.showErrorToast(e)
         }
     }
@@ -71,12 +74,14 @@ class MessagesImporter(private val activity: SimpleActivity) {
                             messagesImported++
                         }
                     } catch (e: Exception) {
+                        Log.d("showErrorToast",e.toString())
                         activity.showErrorToast(e)
                         messagesFailed++
                     }
                 }
                 refreshMessages()
             } catch (e: Exception) {
+                Log.d("showErrorToast",e.toString())
                 activity.showErrorToast(e)
             }
 
@@ -125,6 +130,7 @@ class MessagesImporter(private val activity: SimpleActivity) {
                             xmlParser.skip()
                         }
                     } catch (e: Exception) {
+                        Log.d("showErrorToast",e.toString())
                         activity.showErrorToast(e)
                         messagesFailed++
                     }

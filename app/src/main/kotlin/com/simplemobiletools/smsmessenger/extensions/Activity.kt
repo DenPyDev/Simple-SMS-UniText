@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.provider.ContactsContract
+import android.util.Log
 import com.simplemobiletools.commons.extensions.*
 import com.simplemobiletools.commons.helpers.CONTACT_ID
 import com.simplemobiletools.commons.helpers.IS_PRIVATE
@@ -24,6 +25,7 @@ fun Activity.dialNumber(phoneNumber: String, callback: (() -> Unit)? = null) {
         } catch (e: ActivityNotFoundException) {
             toast(com.simplemobiletools.commons.R.string.no_app_found)
         } catch (e: Exception) {
+            Log.d("showErrorToast", e.toString())
             showErrorToast(e)
         }
     }
@@ -46,6 +48,7 @@ fun Activity.launchViewIntent(uri: Uri, mimetype: String, filename: String) {
                 toast(com.simplemobiletools.commons.R.string.no_app_found)
             }
         } catch (e: Exception) {
+            Log.d("showErrorToast", e.toString())
             showErrorToast(e)
         }
     }

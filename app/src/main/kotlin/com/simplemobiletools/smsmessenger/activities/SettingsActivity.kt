@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import com.simplemobiletools.commons.activities.ManageBlockedNumbersActivity
 import com.simplemobiletools.commons.dialogs.*
@@ -146,6 +147,7 @@ class SettingsActivity : SimpleActivity() {
                     toast(com.simplemobiletools.commons.R.string.exporting_successful)
                 }
             } catch (e: Exception) {
+                Log.d("showErrorToast", e.toString())
                 showErrorToast(e)
             }
         }

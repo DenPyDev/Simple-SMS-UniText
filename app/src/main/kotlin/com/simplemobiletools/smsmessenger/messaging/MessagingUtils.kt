@@ -9,6 +9,7 @@ import android.net.Uri
 import android.provider.Telephony.Sms
 import android.telephony.SmsManager
 import android.telephony.SmsMessage
+import android.util.Log
 import android.widget.Toast
 import com.klinker.android.send_message.Message
 import com.klinker.android.send_message.Settings
@@ -135,6 +136,7 @@ class MessagingUtils(val context: Context) {
                 }
             }
         } catch (e: Exception) {
+            Log.d("showErrorToast", e.toString())
             context.showErrorToast(e)
         }
     }
@@ -164,8 +166,10 @@ class MessagingUtils(val context: Context) {
                     message.addMedia(bytes, mimeType, name, name)
                 }
             } catch (e: Exception) {
+                Log.d("showErrorToast", e.toString())
                 context.showErrorToast(e)
             } catch (e: Error) {
+                Log.d("showErrorToast", e.toString())
                 context.showErrorToast(e.localizedMessage ?: context.getString(com.simplemobiletools.commons.R.string.unknown_error_occurred))
             }
         }
@@ -177,6 +181,7 @@ class MessagingUtils(val context: Context) {
         try {
             transaction.sendNewMessage(message)
         } catch (e: Exception) {
+            Log.d("showErrorToast", e.toString())
             context.showErrorToast(e)
         }
     }

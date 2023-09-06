@@ -129,8 +129,8 @@ abstract class MessagesDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.apply {
                     execSQL("ALTER TABLE messages ADD COLUMN body_translated TEXT NOT NULL DEFAULT ''")
-                    execSQL("ALTER TABLE conversations ADD COLUMN source_lang TEXT NOT NULL DEFAULT ''")
-                    execSQL("ALTER TABLE conversations ADD COLUMN target_lang TEXT NOT NULL DEFAULT ''")
+                    execSQL("ALTER TABLE conversations ADD COLUMN source_lang TEXT")
+                    execSQL("ALTER TABLE conversations ADD COLUMN target_lang TEXT")
                 }
             }
         }

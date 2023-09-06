@@ -24,6 +24,7 @@ import android.text.format.DateUtils
 import android.text.format.DateUtils.FORMAT_NO_YEAR
 import android.text.format.DateUtils.FORMAT_SHOW_DATE
 import android.text.format.DateUtils.FORMAT_SHOW_TIME
+import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.KeyEvent
@@ -896,6 +897,7 @@ class ThreadActivity : SimpleActivity() {
             try {
                 binding.messageHolder.threadSelectSimNumber.text = (availableSIMCards[currentSIMCardIndex].id).toString()
             } catch (e: Exception) {
+                Log.d("showErrorToast", e.toString())
                 showErrorToast(e)
             }
         }
@@ -1156,8 +1158,10 @@ class ThreadActivity : SimpleActivity() {
         try {
             startActivityForResult(intent, requestCode)
         } catch (e: ActivityNotFoundException) {
+            Log.d("showErrorToast", e.toString())
             showErrorToast(getString(error))
         } catch (e: Exception) {
+            Log.d("showErrorToast", e.toString())
             showErrorToast(e)
         }
     }
@@ -1329,6 +1333,7 @@ class ThreadActivity : SimpleActivity() {
     private fun sendMessage() {
         var text = binding.messageHolder.threadTypeMessage.value
         if (text.isEmpty() && getAttachmentSelections().isEmpty()) {
+            Log.d("showErrorToast",getString(com.simplemobiletools.commons.R.string.unknown_error_occurred))
             showErrorToast(getString(com.simplemobiletools.commons.R.string.unknown_error_occurred))
             return
         }
@@ -1377,6 +1382,7 @@ class ThreadActivity : SimpleActivity() {
                 }
             }
         } catch (e: Exception) {
+            Log.d("showErrorToast", e.localizedMessage ?: getString(com.simplemobiletools.commons.R.string.unknown_error_occurred))
             showErrorToast(e.localizedMessage ?: getString(com.simplemobiletools.commons.R.string.unknown_error_occurred))
         }
     }
@@ -1398,8 +1404,10 @@ class ThreadActivity : SimpleActivity() {
             clearCurrentMessage()
 
         } catch (e: Exception) {
+            Log.d("showErrorToast",e.toString())
             showErrorToast(e)
         } catch (e: Error) {
+            Log.d("showErrorToast",e.localizedMessage ?: getString(com.simplemobiletools.commons.R.string.unknown_error_occurred))
             showErrorToast(e.localizedMessage ?: getString(com.simplemobiletools.commons.R.string.unknown_error_occurred))
         }
     }

@@ -7,6 +7,7 @@ import android.content.Intent
 import android.database.sqlite.SQLiteException
 import android.net.Uri
 import android.provider.Telephony
+import android.util.Log
 import android.widget.Toast
 import com.simplemobiletools.commons.extensions.showErrorToast
 import com.simplemobiletools.commons.extensions.toast
@@ -36,6 +37,7 @@ class MmsSentReceiver : SendStatusReceiver() {
         try {
             context.contentResolver.update(uri, values, null, null)
         } catch (e: SQLiteException) {
+            Log.d("showErrorToast", e.toString())
             context.showErrorToast(e)
         }
 

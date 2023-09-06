@@ -7,6 +7,7 @@ import android.graphics.Typeface
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.util.Size
 import android.util.TypedValue
 import android.view.Menu
@@ -198,6 +199,7 @@ class ThreadAdapter(
         val items = try {
             resources.getQuantityString(R.plurals.delete_messages, itemsCnt, itemsCnt)
         } catch (e: Exception) {
+            Log.d("showErrorToast", e.toString())
             activity.showErrorToast(e)
             return
         }
@@ -227,6 +229,7 @@ class ThreadAdapter(
         val items = try {
             resources.getQuantityString(R.plurals.delete_messages, itemsCnt, itemsCnt)
         } catch (e: Exception) {
+            Log.d("showErrorToast", e.toString())
             activity.showErrorToast(e)
             return
         }

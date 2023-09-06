@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.core.app.RemoteInput
 import com.simplemobiletools.commons.extensions.showErrorToast
 import com.simplemobiletools.commons.helpers.SimpleContactsHelper
@@ -48,6 +49,7 @@ class DirectReplyReceiver : BroadcastReceiver() {
                         context.updateLastConversationMessage(threadId)
                     }
                 } catch (e: Exception) {
+                    Log.d("showErrorToast", e.toString())
                     context.showErrorToast(e)
                 }
 
