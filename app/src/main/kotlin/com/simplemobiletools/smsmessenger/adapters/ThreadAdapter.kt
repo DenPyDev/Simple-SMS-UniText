@@ -52,10 +52,7 @@ import com.simplemobiletools.smsmessenger.models.Attachment
 import com.simplemobiletools.smsmessenger.models.Message
 import com.simplemobiletools.smsmessenger.models.ThreadItem
 import com.simplemobiletools.smsmessenger.models.ThreadItem.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class ThreadAdapter(
     activity: SimpleActivity,
@@ -181,23 +178,88 @@ class ThreadAdapter(
     private fun performTranslateSelected() {
         CoroutineScope(Dispatchers.IO).launch {
             val messagesToTranslate = getSelectedItems().filterIsInstance<Message>()
-            val updatedMessages = ArrayList<ThreadItem>()
+            val updatedMessages = mutableListOf<Message>()
+            val context = activity  // Ensure 'activity' is a property in your class
+            var threadId: Long
 
             for (message in messagesToTranslate) {
-                val context = activity
-                    val threadId = message.threadId
-                    val copiedText = message.body
-                    Log.d("performTranslateSelected", copiedText)
-                    val translatedText = translateText(context, threadId, copiedText)
-                    val updatedMessage = message.copy(bodyTranslated = translatedText)
-                    context.messagesDB.insertOrUpdate(updatedMessage)
-                    updatedMessages.add(updatedMessage)
+                threadId = message.threadId  // Make sure 'threadId' in 'Message' is of type Long
+                val copiedText = message.body
+
+                val translatedText = translateText(context, threadId, copiedText)
+                val updatedMessage = message.copy(bodyTranslated = translatedText)
+
+//                // Logging for debugging
+//                Log.d("log3", copiedText)
+//                Log.d("log3", translatedText)
+//                Log.d("log3", threadId.toString())
+//                Log.d("log3", "--------------------")
+
+                context.messagesDB.insertOrUpdate(updatedMessage)
+                updatedMessages.add(updatedMessage)
             }
-            withContext(Dispatchers.Main) {
-                updateMessages(updatedMessages)
-            }
+
+//            updatedMessages.forEach { message ->
+//                context.moveMessageToRecycleBin(message.id)
+//            }
+//            delay(1000)
+//            updatedMessages.forEach { message ->
+//                context.restoreMessageFromRecycleBin(message.id)
+//            }
         }
     }
+
+//    private fun performTranslateSelected() {
+//        CoroutineScope(Dispatchers.IO).launch {
+//            val messagesToTranslate = getSelectedItems().filterIsInstance<Message>()
+//            val updatedMessages = ArrayList<ThreadItem>()
+//            val context = activity
+//            var threadId : Long = 0
+//            for (message in messagesToTranslate) {
+//                    threadId = message.threadId
+//                    val copiedText = message.body
+//
+//                    val translatedText = translateText(context, threadId, copiedText)
+//                    val updatedMessage = message.copy(bodyTranslated = translatedText)
+//                    Log.d("log3", copiedText )
+//                    Log.d("log3", translatedText )
+//                    Log.d("log3", threadId.toString())
+//                    Log.d("log3", "--------------------" )
+//                    context.messagesDB.insertOrUpdate(updatedMessage)
+//                    updatedMessages.add(updatedMessage)
+//            }
+//            for (message in  ArrayList(updatedMessages))
+//            {
+//                context.moveMessageToRecycleBin(message.id)
+//
+//            }
+//
+//            for (message in  ArrayList(updatedMessages))
+//            {
+//                context.restoreMessageFromRecycleBin(message)
+//
+//            }
+//
+//
+//            deleteMessages(updatedMessages.filterIsInstance<Message>(), true, false)
+//            delay(1000)
+//            deleteMessages(updatedMessages.filterIsInstance<Message>(), false, true)
+//
+//
+//            moveMessageToRecycleBin(messageId)
+//        } else if (fromRecycleBin) {
+//            restoreMessageFromRecycleBin(messageId)
+//
+////            deleteMessages(updatedMessages.filterIsInstance<Message>(), false, false, true)
+//
+////            val allMessages: ArrayList<ThreadItem> =  ArrayList(context.messagesDB.getThreadMessages(threadId))
+////            deleteMessages(allMessages.filterIsInstance<Message>(), false, true)
+////            val allMessages: ArrayList<ThreadItem> = ArrayList(getAllItems().filterIsInstance<Message>())
+////            withContext(Dispatchers.Main) {
+////                updateMessages(allMessages)
+////            }
+//        }
+//    }
 
 
 
@@ -301,6 +363,9 @@ class ThreadAdapter(
     }
 
     private fun getSelectedItems() = currentList.filter { selectedKeys.contains((it as? Message)?.hashCode() ?: 0) } as ArrayList<ThreadItem>
+
+    private fun getAllItems() = ArrayList<ThreadItem>(currentList)
+
 
     private fun isThreadDateTime(position: Int) = currentList.getOrNull(position) is ThreadDateTime
 

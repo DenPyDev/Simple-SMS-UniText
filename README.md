@@ -8,6 +8,7 @@ https://github.com/SimpleMobileTools/Simple-SMS-Messenger
 [] - option to translate after receiving, manually (button (orig, target) )
 [+] - save sms with their original text and their translation
 [+] - select multiply
+[ ] - target spinner - show original
 issues
 [] - in first run i guess all messages in SMS db treated as new? and writing to APP db is is normal?
 
