@@ -1084,7 +1084,7 @@ class ThreadActivity : SimpleActivity() {
     }
 
     private fun showConversationDetails() {
-        Intent(this, ConversationDetailsActivity::class.java).apply {
+        Intent(this, ConversationDetailsActivityWithSpinners::class.java).apply {
             putExtra(THREAD_ID, threadId)
             startActivity(this)
         }

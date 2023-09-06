@@ -1,6 +1,5 @@
 package com.simplemobiletools.smsmessenger.activities
 
-
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -18,19 +17,13 @@ import com.simplemobiletools.smsmessenger.extensions.*
 import com.simplemobiletools.smsmessenger.helpers.THREAD_ID
 import com.simplemobiletools.smsmessenger.models.Conversation
 
-class ConversationDetailsActivity : SimpleActivity() {
+open class ConversationDetailsActivity : SimpleActivity() {
 
-    private var threadId: Long = 0L
-    private var conversation: Conversation? = null
+    var threadId: Long = 0L
+    var conversation: Conversation? = null
     private lateinit var participants: ArrayList<SimpleContact>
 
-    private val binding by viewBinding(ActivityConversationDetailsBinding::inflate)
-
-//    private val sourceSpinnerList: List<String?> = mutableListOf(null, "en", "ka", "en_ka", "ar", "en_ar", "kz", "en_kz", "srb", "en_srb", "ru", "en_ru", "arab", "йцуйцу")
-//    private val targetSpinnerList: List<String?> = mutableListOf(null, "en", "ka", "ar", "kz", "srb", "ru", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab", "arab")
-
-    private val sourceSpinnerList: List<String?> = listOf(null) + LanguageConfig.possibleSources
-    private val targetSpinnerList: List<String?> = listOf(null) + LanguageConfig.possibleTargets
+    val binding by viewBinding(ActivityConversationDetailsBinding::inflate)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         isMaterialActivity = true
@@ -48,58 +41,17 @@ class ConversationDetailsActivity : SimpleActivity() {
         threadId = intent.getLongExtra(THREAD_ID, 0L)
         ensureBackgroundThread {
             conversation = conversationsDB.getConversationWithThreadId(threadId)
-            participants = getParticipants()
+            participants = if (conversation != null && conversation!!.isScheduled) {
+                val message = messagesDB.getThreadMessages(conversation!!.threadId).firstOrNull()
+                message?.participants ?: arrayListOf()
+            } else {
+                getThreadParticipants(threadId, null)
+            }
             runOnUiThread {
                 setupTextViews()
                 setupParticipants()
-                setupSpinners()
             }
         }
-    }
-
-    private fun getParticipants(): ArrayList<SimpleContact> {
-        return if (conversation != null && conversation!!.isScheduled) {
-            val message = messagesDB.getThreadMessages(conversation!!.threadId).firstOrNull()
-            message?.participants ?: arrayListOf()
-        } else {
-            getThreadParticipants(threadId, null)
-        }
-    }
-
-    private fun setupSpinner(spinner: Spinner, dataList: List<String?>, initialSelectedValue: String?, onItemSelected: (String?) -> Unit) {
-        val displayList = dataList.map { it ?: "---" }
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, displayList)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = adapter
-        spinner.setSelection(displayList.indexOf(initialSelectedValue ?: "---"))
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val selectedLang = if (displayList[position] == "---") null else dataList[position]
-                onItemSelected(selectedLang)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                onItemSelected(null)
-            }
-        }
-    }
-
-
-
-    private fun setupSpinners() {
-
-        setupSpinner(binding.spinnerSourceLang, sourceSpinnerList, conversation?.sourceLang) { selectedLang ->
-            ensureBackgroundThread {
-                conversation = changeConversationSourceLang(conversation!!, selectedLang)
-            }
-        }
-
-        setupSpinner(binding.spinnerTargetLang, targetSpinnerList, conversation?.targetLang) { selectedLang ->
-            ensureBackgroundThread {
-                conversation = changeConversationTargetLang(conversation!!, selectedLang)
-            }
-        }
-
     }
 
     override fun onResume() {
@@ -142,5 +94,62 @@ class ConversationDetailsActivity : SimpleActivity() {
             }
         }
         binding.participantsRecyclerview.adapter = adapter
+    }
+}
+
+
+class ConversationDetailsActivityWithSpinners : ConversationDetailsActivity() {
+
+    private val sourceSpinnerList: List<String?> = listOf(null) + LanguageConfig.possibleSources
+    private val targetSpinnerList: List<String?> = listOf(null) + LanguageConfig.possibleTargets
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        ensureBackgroundThread {
+            runOnUiThread {
+                setupSpinners()
+            }
+        }
+    }
+
+    private fun getParticipants(): ArrayList<SimpleContact> {
+        return if (conversation != null && conversation!!.isScheduled) {
+            val message = messagesDB.getThreadMessages(conversation!!.threadId).firstOrNull()
+            message?.participants ?: arrayListOf()
+        } else {
+            getThreadParticipants(threadId, null)
+        }
+    }
+
+    private fun setupSpinner(spinner: Spinner, dataList: List<String?>, initialSelectedValue: String?, onItemSelected: (String?) -> Unit) {
+        val displayList = dataList.map { it ?: "---" }
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, displayList)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
+        spinner.setSelection(displayList.indexOf(initialSelectedValue ?: "---"))
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                val selectedLang = if (displayList[position] == "---") null else dataList[position]
+                onItemSelected(selectedLang)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                onItemSelected(null)
+            }
+        }
+    }
+
+    private fun setupSpinners() {
+        setupSpinner(binding.spinnerSourceLang, sourceSpinnerList, conversation?.sourceLang) { selectedLang ->
+            ensureBackgroundThread {
+                conversation = changeConversationSourceLang(conversation!!, selectedLang)
+            }
+        }
+
+        setupSpinner(binding.spinnerTargetLang, targetSpinnerList, conversation?.targetLang) { selectedLang ->
+            ensureBackgroundThread {
+                conversation = changeConversationTargetLang(conversation!!, selectedLang)
+            }
+        }
     }
 }

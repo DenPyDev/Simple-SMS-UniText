@@ -159,7 +159,7 @@
             android:parentActivityName=".activities.ThreadActivity" />
 
         <activity
-            android:name=".activities.ConversationDetailsActivity"
+            android:name=".activities.ConversationDetailsActivityWithSpinners"
             android:configChanges="orientation"
             android:exported="false"
             android:label="@string/conversation_details"
