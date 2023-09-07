@@ -10,8 +10,15 @@ https://github.com/SimpleMobileTools/Simple-SMS-Messenger
 [+] - save sms with their original text and their translation
 [+] - select multiply
 [+] - show translated in preview sms list
+[+] - add Ukrainian
+[] - fix Google title
+[] - check the internet, if not - write errors
+[] - add default language,
+[] - and set the language by long-tap on the chat for all selected
+
 issues
 [] - in first run i guess all messages in SMS db treated as new? and writing to APP db is is normal?
+
 
 <img alt="Logo" src="graphics/icon.png" width="120" />
 

@@ -9,6 +9,7 @@ object LanguageConfig {
         "Armenian" to "hy",
         "Kazakh" to "kk",
         "Serbian" to "sr",
+        "Ukrainian" to "uk",
         "Russian" to "ru"
     )
 
@@ -17,6 +18,7 @@ object LanguageConfig {
         "EnArmenian" to TransliterationMaps.Armenian.EasternArmenian,
         "EnKazakh" to TransliterationMaps.Kazakh.Standard,
         "EnSerbian" to TransliterationMaps.Serbian.Standard,
+        "EnUkrainian" to TransliterationMaps.Ukrainian.Standard,
         "EnRussian" to TransliterationMaps.Russian.Standard
     )
 

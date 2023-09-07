@@ -1,8 +1,11 @@
+import android.app.AlertDialog
 import android.content.Context
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
+import android.widget.Toast
 import com.google.cloud.translate.Translate
+import com.google.cloud.translate.TranslateException
 import com.google.cloud.translate.TranslateOptions
 import java.nio.charset.Charset
 import java.security.KeyStore
@@ -10,6 +13,9 @@ import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 /**
  * Provides functionality to amend certain translations.
@@ -47,8 +53,36 @@ class GoogleTranslate(private val context: Context) {
                 Translate.TranslateOption.sourceLanguage(sourceLang),
                 Translate.TranslateOption.targetLanguage(targetLang)
             )
+
+            runBlocking {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Translation OK, exit and enter chat again", Toast.LENGTH_LONG).show()
+                }
+            }
+
             translation.translatedText
         } catch (e: Exception) {
+            val errorMessage = e.message ?: "Error"
+            val errorCode = if (e is TranslateException) e.code else null
+            val errorCodeDescription = when (errorCode) {
+                400 -> "Invalid request"
+                401 -> "Authentication error"
+                403 -> "Access denied"
+                404 -> "Resource not found"
+                429 -> "Too many requests"
+                500 -> "Server error"
+                else -> "Unknown error code"
+            }
+            runBlocking {
+                withContext(Dispatchers.Main) {
+                    AlertDialog.Builder(context).apply {
+                        setTitle("Translation Error")
+                        setMessage("$errorMessage (Code: $errorCode - $errorCodeDescription)")
+                        setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                        show()
+                    }
+                }
+            }
             e.printStackTrace()
             text
         }
