@@ -11,13 +11,59 @@ https://github.com/SimpleMobileTools/Simple-SMS-Messenger
 [+] - select multiply
 [+] - show translated in preview sms list
 [+] - add Ukrainian
-[] - fix Google title
+
 [+] - check the internet, if not - write errors
 [] - add default language,
 [] - and set the language by long-tap on the chat for all selected
 
 issues
 [] - in first run i guess all messages in SMS db treated as new? and writing to APP db is is normal?
+
+[] - fix Google title (MMS sender_name = sender_phone_number =  google@rbm.goog, read from sms, save to db, read from dg OK, display - bug)
+
+long string read by, there is nothing we can do
+Context.kt
+fun Context.getPhoneNumberFromAddressId(canonicalAddressId: Int): String {
+val aaa = cursor.getStringValue(Mms.Addr.ADDRESS)
+
+short string read by, google@rbm.goog
+Context.kt
+funContext.getMMS(threadId: Long? = null, getImageResolutions: Boolean = false, sortOrder: String? = null, dateFrom: Int = -1): ArrayList<Message> {
+senderNumber = getMMSSender(mmsId)
+senderName = namePhoto.name
+getNameAndPhotoFromPhoneNumber(getMMSSender(mmsId)).name google@rbm.goog
+Context.getMMSSender
+
+
+
+table messages
+phoneNumber sender_phone_number
+google@rbm.goog
+title sender_name
+google@rbm.goog
+
+getNewConversations
+getConversations(privateContacts = MyContactsContentProvider.getSimpleContacts(this, privateCursor) ).map { it.title }
+
+table conversations
+phoneNumber sender_phone_number
+m5xw6z3mmvpv6qkul5pxeytnfztw633hl45v6r3pn5twyzk7hnpsgmbqgaydama=@bot.rcs.google.com
+title sender_name
+m5xw6z3mmvpv6qkul5pxeytnfztw633hl45v6r3pn5twyzk7hnpsgmbqgaydama=@bot.rcs.google.com
+
+
+BaseConversationsAdapter.kt
+onBindViewHolder
+getItem(position)//it`s getting a list somewhere
+from BaseConversationsAdapter.kt updateConversations submitList?
+
+
+conversation.title
+phoneNumber
+m5xw6z3mmvpv6qkul5pxeytnfztw633hl45v6r3pn5twyzk7hnpsgmbqgaydama=@bot.rcs.google.com
+title
+m5xw6z3mmvpv6qkul5pxeytnfztw633hl45v6r3pn5twyzk7hnpsgmbqgaydama=@bot.rcs.google.com
+
 
 
 <img alt="Logo" src="graphics/icon.png" width="120" />
@@ -34,7 +80,7 @@ You can customize which part of the message is visible on the lockscreen too. Yo
 
 It comes with material design and dark theme by default, provides great user experience for easy usage. This messaging app also provides users with the ability to search messages quickly and efficiently. Gone are the days when you have to scroll down through all the private messaging and group messaging conversations to reach your required message. Simply search and get what you want with this text messaging app.
 
-Contains no ads or unnecessary permissions. It is fully opensource, provides customizable colors. You can also customize the font of your text message in both group messaging and private messaging. 
+Contains no ads or unnecessary permissions. It is fully opensource, provides customizable colors. You can also customize the font of your text message in both group messaging and private messaging.
 
 Check out the full suite of Simple Tools here:  
 https://www.simplemobiletools.com
