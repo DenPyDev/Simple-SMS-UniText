@@ -12,7 +12,7 @@ https://github.com/SimpleMobileTools/Simple-SMS-Messenger
 [+] - show translated in preview sms list
 [+] - add Ukrainian
 [] - fix Google title
-[] - check the internet, if not - write errors
+[+] - check the internet, if not - write errors
 [] - add default language,
 [] - and set the language by long-tap on the chat for all selected
 
