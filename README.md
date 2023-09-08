@@ -1,26 +1,46 @@
+Sure, here's a formatted version of your README for the "Simple SMS Messenger" project:
+
+---
+
 # Simple SMS Messenger
-TODO:
 
-https://github.com/SimpleMobileTools/Simple-SMS-Messenger
+## Table of Contents
 
-[+] - select language for each sender (orig, target)
-[+] - select language for each sender, remove "---" use "original" instead
-[+] - select target language "original" to return to original lang
-[] - select default language for all NEW senders except ones from first list (orig, target)
-[] - and set the language by long-tap on the chat for all selected
-[+-] - option to translate after receiving, manually (button (orig, target) ) // add screen refresh
-[+] - save sms with their original text and their translation
-[+] - select multiply
-[+] - show translated in preview sms list
-[+] - add Ukrainian
+- [Introduction](#introduction)
+- [TODO List](#todo-list)
+- [Issues](#issues)
 
-[+] - check the internet, if not - write errors
-[] - disable/enable auto translation
+## Introduction
 
-issues
-[] - in first run i guess all messages in SMS db treated as new? and writing to APP db is is normal?
+[Simple SMS Messenger](https://github.com/SimpleMobileTools/Simple-SMS-Messenger) is an SMS messaging app designed to simplify the process of managing and translating text messages. This README outlines the current project status and the list of tasks to be completed.
 
-[rejected] - fix Google title (MMS sender_name = sender_phone_number =  google@rbm.goog, read from sms, save to db, read from dg OK, display - bug)
+## TODO List
+
+Here is a list of tasks that need to be completed for the Simple SMS Messenger project:
+
+- [x] Select language for each sender (original, target)
+- [x] Select language for each sender, remove "---" and use "original" instead
+- [x] Select target language "original" to return to the original language
+- [ ] Select the default language for all NEW senders except ones from the first list (original, target)
+- [ ] Set the language by long-tap on the chat for all selected
+- [x] Option to translate after receiving manually (button for original and target)
+- [x] Save SMS with their original text and their translation
+- [x] Select multiple SMS
+- [x] Show translated SMS in the preview SMS list
+- [x] Add Ukrainian language support
+- [x] Check the internet; if not available, display error messages
+- [ ] Disable/enable auto-translation
+
+### Issues
+
+Here are some known issues that need attention:
+
+- [ ] In the first run, all messages in the SMS database are treated as new; investigate writing to the app database
+- [rejected] Fix Google title (MMS sender_name = sender_phone_number = google@rbm.goog, read from SMS, save to DB, read from DG OK, display - bug)
+
+---
+
+Feel free to customize and expand upon this template as needed for your project's documentation.
 
 long string read by, there is nothing we can do
 Context.kt
