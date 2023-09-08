@@ -4,8 +4,10 @@ TODO:
 https://github.com/SimpleMobileTools/Simple-SMS-Messenger
 
 [+] - select language for each sender (orig, target)
+[+] - select language for each sender, remove "---" use "original" instead
 [+] - select target language "original" to return to original lang
 [] - select default language for all NEW senders except ones from first list (orig, target)
+[] - and set the language by long-tap on the chat for all selected
 [+-] - option to translate after receiving, manually (button (orig, target) ) // add screen refresh
 [+] - save sms with their original text and their translation
 [+] - select multiply
@@ -13,13 +15,12 @@ https://github.com/SimpleMobileTools/Simple-SMS-Messenger
 [+] - add Ukrainian
 
 [+] - check the internet, if not - write errors
-[] - add default language,
-[] - and set the language by long-tap on the chat for all selected
+[] - disable/enable auto translation
 
 issues
 [] - in first run i guess all messages in SMS db treated as new? and writing to APP db is is normal?
 
-[] - fix Google title (MMS sender_name = sender_phone_number =  google@rbm.goog, read from sms, save to db, read from dg OK, display - bug)
+[rejected] - fix Google title (MMS sender_name = sender_phone_number =  google@rbm.goog, read from sms, save to db, read from dg OK, display - bug)
 
 long string read by, there is nothing we can do
 Context.kt

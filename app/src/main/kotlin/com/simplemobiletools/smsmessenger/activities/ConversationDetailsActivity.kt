@@ -100,8 +100,8 @@ open class ConversationDetailsActivity : SimpleActivity() {
 
 class ConversationDetailsActivityWithSpinners : ConversationDetailsActivity() {
 
-    private val sourceSpinnerList: List<String?> = listOf(null) + LanguageConfig.possibleSources
-    private val targetSpinnerList: List<String?> = listOf(null, "Original") + LanguageConfig.possibleTargets
+    private val sourceSpinnerList: List<String?> = LanguageTransliterationManager.sourceList
+    private val targetSpinnerList: List<String?> = LanguageTransliterationManager.targetList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
