@@ -36,12 +36,17 @@ object LanguageTransliterationManager {
         "EnRussian" to TransliterationKey("ru", TransliterationMaps.Russian.Standard),
     )
 
-    private fun sortListByRemovingLeadingEn(list: List<String?>): List<String?> {
-        return list.sortedBy { it?.removeLeadingEn() }
+    private fun sortListForSpinner(list: List<String?>): List<String?> {
+        val sortedList = list.sortedBy { it?.removeLeadingEn() }
+        val index = sortedList.indexOf("Original")
+        if (index != -1) {
+            return listOf("Original") + sortedList.filterNot { it == "Original" }
+        }
+        return sortedList
     }
 
-    val sourceList: List<String?> = sortListByRemovingLeadingEn((languageMap.keys + transliterationMap.keys).toList())
-    val targetList: List<String?> = sortListByRemovingLeadingEn(languageMap.keys.toList())
+    val sourceList: List<String?> = sortListForSpinner((languageMap.keys + transliterationMap.keys).toList())
+    val targetList: List<String?> = sortListForSpinner(languageMap.keys.toList())
 }
 
 
@@ -62,7 +67,7 @@ class Processor(private val context: Context) {
         val sourceLangAbbr = LanguageTransliterationManager.languageMap[sourceLang.removeLeadingEn()]
         val targetLangAbbr = LanguageTransliterationManager.languageMap[targetLang]
 
-        return if (sourceLangAbbr != null && targetLangAbbr != null) {
+        return if (sourceLangAbbr != null && targetLangAbbr != null && sourceLangAbbr != targetLangAbbr ) {
             GoogleTranslate(context).translate(
                 text = transliteratedText,
                 sourceLang = sourceLangAbbr,
