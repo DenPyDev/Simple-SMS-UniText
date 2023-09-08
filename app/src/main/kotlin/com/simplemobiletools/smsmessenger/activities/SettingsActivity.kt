@@ -1,5 +1,6 @@
 package com.simplemobiletools.smsmessenger.activities
 
+import GoogleTranslate
 import android.annotation.TargetApi
 import android.content.Intent
 import android.net.Uri
@@ -13,6 +14,7 @@ import com.simplemobiletools.commons.helpers.*
 import com.simplemobiletools.commons.models.RadioItem
 import com.simplemobiletools.smsmessenger.R
 import com.simplemobiletools.smsmessenger.databinding.ActivitySettingsBinding
+import com.simplemobiletools.smsmessenger.dialogs.ChangeApiKeyDialog
 import com.simplemobiletools.smsmessenger.dialogs.ExportMessagesDialog
 import com.simplemobiletools.smsmessenger.extensions.config
 import com.simplemobiletools.smsmessenger.extensions.emptyMessagesRecycleBin
@@ -72,6 +74,7 @@ class SettingsActivity : SimpleActivity() {
         setupAppPasswordProtection()
         setupMessagesExport()
         setupMessagesImport()
+        setupChangeAPIKey()
         updateTextColors(binding.settingsNestedScrollview)
 
         if (blockedNumbersAtPause != -1 && blockedNumbersAtPause != getBlockedNumbers().hashCode()) {
@@ -118,6 +121,13 @@ class SettingsActivity : SimpleActivity() {
         }
     }
 
+    private fun setupChangeAPIKey() {
+        val googleTranslateInstance = GoogleTranslate(this) // Create an instance of GoogleTranslate
+
+        binding.settingsGoogleApiKeyHolder.setOnClickListener {
+            ChangeApiKeyDialog(this, googleTranslateInstance) // No callback needed now
+        }
+    }
     private fun exportMessages(uri: Uri) {
         ensureBackgroundThread {
             try {

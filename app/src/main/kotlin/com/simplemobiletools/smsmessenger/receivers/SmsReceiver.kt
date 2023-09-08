@@ -1,5 +1,6 @@
 package com.simplemobiletools.smsmessenger.receivers
 
+import com.simplemobiletools.smsmessenger.languages.Processor
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -18,6 +19,13 @@ import com.simplemobiletools.smsmessenger.helpers.refreshMessages
 import com.simplemobiletools.smsmessenger.models.Message
 
 class SmsReceiver : BroadcastReceiver() {
+
+    private fun translateText(context: Context, threadId: Long, text: String): String {
+        var conv = context.conversationsDB.getConversationWithThreadId(threadId)
+        val processor = Processor(context)
+        return processor.process(text=text, sourceLang=conv?.sourceLang, targetLang=conv?.targetLang)
+    }
+
     override fun onReceive(context: Context, intent: Intent) {
         val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
         var address = ""
@@ -95,10 +103,12 @@ class SmsReceiver : BroadcastReceiver() {
                     val participants = arrayListOf(participant)
                     val messageDate = (date / 1000).toInt()
 
+                    var bodyTranslated = translateText(context, threadId, body)
                     val message =
                         Message(
                             newMessageId,
                             body,
+                            bodyTranslated,
                             type,
                             status,
                             participants,
@@ -115,7 +125,7 @@ class SmsReceiver : BroadcastReceiver() {
                     context.messagesDB.insertOrUpdate(message)
                     context.updateConversationArchivedStatus(threadId, false)
                     refreshMessages()
-                    context.showReceivedMessageNotification(newMessageId, address, body, threadId, bitmap)
+                    context.showReceivedMessageNotification(newMessageId, address, bodyTranslated, threadId, bitmap)
                 }
             }
         }

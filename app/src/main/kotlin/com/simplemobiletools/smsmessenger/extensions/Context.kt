@@ -101,6 +101,8 @@ fun Context.getMessages(
 
         val id = cursor.getLongValue(Sms._ID)
         val body = cursor.getStringValue(Sms.BODY)
+        val messageFromDB = messagesDB.getMessageById(id)
+        var bodyTranslated = messageFromDB?.bodyTranslated ?: body
         val type = cursor.getIntValue(Sms.TYPE)
         val namePhoto = getNameAndPhotoFromPhoneNumber(senderNumber)
         val senderName = namePhoto.name
@@ -120,6 +122,7 @@ fun Context.getMessages(
             Message(
                 id,
                 body,
+                bodyTranslated,
                 type,
                 status,
                 ArrayList(participants),
@@ -220,6 +223,7 @@ fun Context.getMMS(threadId: Long? = null, getImageResolutions: Boolean = false,
             Message(
                 mmsId,
                 body,
+                "bodyTranslated",
                 type,
                 status,
                 participants,
@@ -284,6 +288,7 @@ fun Context.getConversations(threadId: Long? = null, privateContacts: ArrayList<
     val conversations = ArrayList<Conversation>()
     val simpleContactHelper = SimpleContactsHelper(this)
     val blockedNumbers = getBlockedNumbers()
+    val conv = threadId?.let { conversationsDB.getConversationWithThreadId(it) }
     queryCursor(uri, projection, selection, selectionArgs, sortOrder, true) { cursor ->
         val id = cursor.getLongValue(Threads._ID)
         var snippet = cursor.getStringValue(Threads.SNIPPET) ?: ""
@@ -1012,7 +1017,10 @@ fun Context.insertOrUpdateConversation(
         } else {
             conversation.title
         }
-        conversation.copy(title = title, usesCustomTitle = usesCustomTitle)
+        conversation.copy(title = title,
+            usesCustomTitle = usesCustomTitle,
+            sourceLang = conversation.sourceLang ?: cachedConv.sourceLang,
+            targetLang = conversation.targetLang ?: cachedConv.targetLang)
     } else {
         conversation
     }
@@ -1028,6 +1036,27 @@ fun Context.renameConversation(conversation: Conversation, newTitle: String): Co
     }
     return updatedConv
 }
+
+fun Context.changeConversationSourceLang(conversation: Conversation, newSourceLang: String?): Conversation {
+    val updatedConv = conversation.copy(sourceLang = newSourceLang)
+    try {
+        conversationsDB.insertOrUpdate(updatedConv)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return updatedConv
+}
+
+fun Context.changeConversationTargetLang(conversation: Conversation, newTargetLang: String?): Conversation {
+    val updatedConv = conversation.copy(targetLang = newTargetLang)
+    try {
+        conversationsDB.insertOrUpdate(updatedConv)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return updatedConv
+}
+
 
 fun Context.createTemporaryThread(message: Message, threadId: Long = generateRandomId(), cachedConv: Conversation?) {
     val simpleContactHelper = SimpleContactsHelper(this)

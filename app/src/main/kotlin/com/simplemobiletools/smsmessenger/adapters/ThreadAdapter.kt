@@ -1,6 +1,8 @@
 package com.simplemobiletools.smsmessenger.adapters
 
+import com.simplemobiletools.smsmessenger.languages.Processor
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
@@ -49,6 +51,7 @@ import com.simplemobiletools.smsmessenger.models.Attachment
 import com.simplemobiletools.smsmessenger.models.Message
 import com.simplemobiletools.smsmessenger.models.ThreadItem
 import com.simplemobiletools.smsmessenger.models.ThreadItem.*
+import kotlinx.coroutines.*
 
 class ThreadAdapter(
     activity: SimpleActivity,
@@ -75,7 +78,7 @@ class ThreadAdapter(
         val selectedItem = getSelectedItems().firstOrNull() as? Message
         val hasText = selectedItem?.body != null && selectedItem.body != ""
         menu.apply {
-            findItem(R.id.cab_copy_to_clipboard).isVisible = isOneItemSelected && hasText
+            findItem(R.id.cab_copy_to_clipboard).isVisible = hasText
             findItem(R.id.cab_save_as).isVisible = isOneItemSelected && selectedItem?.attachment?.attachments?.size == 1
             findItem(R.id.cab_share).isVisible = isOneItemSelected && hasText
             findItem(R.id.cab_forward_message).isVisible = isOneItemSelected
@@ -91,6 +94,7 @@ class ThreadAdapter(
         }
 
         when (id) {
+            R.id.cab_translate -> performTranslateSelected()
             R.id.cab_copy_to_clipboard -> copyToClipboard()
             R.id.cab_save_as -> saveAs()
             R.id.cab_share -> shareText()
@@ -163,9 +167,37 @@ class ThreadAdapter(
         }
     }
 
+    private suspend fun translateText(context: Context, threadId: Long, text: String): String {
+        val conv = context.conversationsDB.getConversationWithThreadId(threadId)
+        val processor = Processor(context)
+        return processor.process(text=text, sourceLang=conv?.sourceLang, targetLang=conv?.targetLang)
+    }
+
+
+    private fun performTranslateSelected() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val messagesToTranslate = getSelectedItems().filterIsInstance<Message>()
+            val updatedMessages = mutableListOf<Message>()
+            val context = activity
+            var threadId: Long
+
+            for (message in messagesToTranslate) {
+                threadId = message.threadId
+                val copiedText = message.body
+
+                val translatedText = translateText(context, threadId, copiedText)
+                val updatedMessage = message.copy(bodyTranslated = translatedText)
+                context.messagesDB.insertOrUpdate(updatedMessage)
+                updatedMessages.add(updatedMessage)
+            }
+        }
+    }
+
+
     private fun copyToClipboard() {
-        val firstItem = getSelectedItems().firstOrNull() as? Message ?: return
-        activity.copyToClipboard(firstItem.body)
+        val selectedMessages = getSelectedItems().filterIsInstance<Message>()
+        val combinedText = selectedMessages.joinToString("\n\n") { it.bodyTranslated }
+        activity.copyToClipboard(combinedText)
     }
 
     private fun saveAs() {
@@ -176,13 +208,13 @@ class ThreadAdapter(
 
     private fun shareText() {
         val firstItem = getSelectedItems().firstOrNull() as? Message ?: return
-        activity.shareTextIntent(firstItem.body)
+        activity.shareTextIntent(firstItem.bodyTranslated)
     }
 
     private fun selectText() {
         val firstItem = getSelectedItems().firstOrNull() as? Message ?: return
-        if (firstItem.body.trim().isNotEmpty()) {
-            SelectTextDialog(activity, firstItem.body)
+        if (firstItem.bodyTranslated.trim().isNotEmpty()) {
+            SelectTextDialog(activity, firstItem.bodyTranslated)
         }
     }
 
@@ -276,7 +308,7 @@ class ThreadAdapter(
         ItemMessageBinding.bind(view).apply {
             threadMessageHolder.isSelected = selectedKeys.contains(message.hashCode())
             threadMessageBody.apply {
-                text = message.body
+                text = message.bodyTranslated
                 setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize)
                 beVisibleIf(message.body.isNotEmpty())
                 setOnLongClickListener {
