@@ -122,17 +122,15 @@ class ConversationDetailsActivityWithSpinners : ConversationDetailsActivity() {
     }
 
     private fun setupSpinner(spinner: Spinner, dataList: List<String?>, initialSelectedValue: String?, onItemSelected: (String?) -> Unit) {
-        val displayList = dataList.map { it ?: "---" }
+        val displayList = dataList.map {it}
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, displayList)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
-        spinner.setSelection(displayList.indexOf(initialSelectedValue ?: "---"))
+        spinner.setSelection(displayList.indexOf(initialSelectedValue))
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val selectedLang = if (displayList[position] == "---") null else dataList[position]
-                onItemSelected(selectedLang)
+                onItemSelected(dataList[position])
             }
-
             override fun onNothingSelected(parent: AdapterView<*>) {
                 onItemSelected(null)
             }
