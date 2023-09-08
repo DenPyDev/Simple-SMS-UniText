@@ -1,4 +1,21 @@
-# Simple SMS Messenger
+# SMS UniText
+
+is an SMS messaging app designed to simplify the process of managing and translating text messages.
+
+Based on [Simple SMS Messenger](https://github.com/SimpleMobileTools/Simple-SMS-Messenger)
+
+Changes:
+
+- [x] Select language for each sender (original, target)
+- [x] Select target language "original" to return to the original language
+- [x] Option to translate message after receiving, manually
+- [x] Select multiple SMS
+- [x] Show translated SMS in the preview SMS list
+- [x] Add error messages
+- [ ] Disable/enable auto-translation
+- [ ] Set the language by long-tap on the chat for all selected
+- [ ] Select the default language for all NEW senders
+- 
 <img alt="Logo" src="graphics/icon.png" width="120" />
 
 A great way to stay in touch with your relatives, by sending both SMS and MMS messages. The app properly handles group messaging too, just like blocking numbers from Android 7+. Keep in touch with all of your contacts using the messaging app on your phone. It's never been easier to share photos, send emojis, or just say a quick hello. There's so much you can do with your messages, like mute conversations or assign special message tones for certain contacts. With this text message and group messaging app, you can enjoy the daily private messaging and group messaging in a more fun way.

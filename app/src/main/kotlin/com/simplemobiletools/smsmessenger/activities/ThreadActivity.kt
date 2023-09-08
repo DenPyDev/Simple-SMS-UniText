@@ -1082,7 +1082,7 @@ class ThreadActivity : SimpleActivity() {
     }
 
     private fun showConversationDetails() {
-        Intent(this, ConversationDetailsActivity::class.java).apply {
+        Intent(this, ConversationDetailsActivityWithSpinners::class.java).apply {
             putExtra(THREAD_ID, threadId)
             startActivity(this)
         }
@@ -1393,7 +1393,7 @@ class ThreadActivity : SimpleActivity() {
                 val messages = getMessages(threadId, getImageResolutions = true, limit = maxOf(1, attachments.size))
                     .filter { it.id !in messageIds }
                 for (message in messages) {
-                    insertOrUpdateMessage(message)
+                    insertOrUpdateMessage(message.copy(bodyTranslated = message.body))
                 }
             }
             clearCurrentMessage()
@@ -1709,6 +1709,7 @@ class ThreadActivity : SimpleActivity() {
         return Message(
             id = messageId,
             body = text,
+            bodyTranslated = text,
             type = MESSAGE_TYPE_QUEUED,
             status = STATUS_NONE,
             participants = participants,

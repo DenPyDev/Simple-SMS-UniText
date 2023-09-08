@@ -1,6 +1,10 @@
 package com.simplemobiletools.smsmessenger.activities
 
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.core.content.res.ResourcesCompat
 import com.simplemobiletools.commons.extensions.*
 import com.simplemobiletools.commons.helpers.NavigationIcon
@@ -11,15 +15,16 @@ import com.simplemobiletools.smsmessenger.databinding.ActivityConversationDetail
 import com.simplemobiletools.smsmessenger.dialogs.RenameConversationDialog
 import com.simplemobiletools.smsmessenger.extensions.*
 import com.simplemobiletools.smsmessenger.helpers.THREAD_ID
+import com.simplemobiletools.smsmessenger.languages.LanguageTransliterationManager
 import com.simplemobiletools.smsmessenger.models.Conversation
 
-class ConversationDetailsActivity : SimpleActivity() {
+open class ConversationDetailsActivity : SimpleActivity() {
 
-    private var threadId: Long = 0L
-    private var conversation: Conversation? = null
+    var threadId: Long = 0L
+    var conversation: Conversation? = null
     private lateinit var participants: ArrayList<SimpleContact>
 
-    private val binding by viewBinding(ActivityConversationDetailsBinding::inflate)
+    val binding by viewBinding(ActivityConversationDetailsBinding::inflate)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         isMaterialActivity = true
@@ -90,5 +95,60 @@ class ConversationDetailsActivity : SimpleActivity() {
             }
         }
         binding.participantsRecyclerview.adapter = adapter
+    }
+}
+
+
+class ConversationDetailsActivityWithSpinners : ConversationDetailsActivity() {
+
+    private val sourceSpinnerList: List<String?> = LanguageTransliterationManager.sourceList
+    private val targetSpinnerList: List<String?> = LanguageTransliterationManager.targetList
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        ensureBackgroundThread {
+            runOnUiThread {
+                setupSpinners()
+            }
+        }
+    }
+
+    private fun getParticipants(): ArrayList<SimpleContact> {
+        return if (conversation != null && conversation!!.isScheduled) {
+            val message = messagesDB.getThreadMessages(conversation!!.threadId).firstOrNull()
+            message?.participants ?: arrayListOf()
+        } else {
+            getThreadParticipants(threadId, null)
+        }
+    }
+
+    private fun setupSpinner(spinner: Spinner, dataList: List<String?>, initialSelectedValue: String?, onItemSelected: (String?) -> Unit) {
+        val displayList = dataList.map {it}
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, displayList)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
+        spinner.setSelection(displayList.indexOf(initialSelectedValue))
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                onItemSelected(dataList[position])
+            }
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                onItemSelected(null)
+            }
+        }
+    }
+
+    private fun setupSpinners() {
+        setupSpinner(binding.spinnerSourceLang, sourceSpinnerList, conversation?.sourceLang) { selectedLang ->
+            ensureBackgroundThread {
+                conversation = changeConversationSourceLang(conversation!!, selectedLang)
+            }
+        }
+
+        setupSpinner(binding.spinnerTargetLang, targetSpinnerList, conversation?.targetLang) { selectedLang ->
+            ensureBackgroundThread {
+                conversation = changeConversationTargetLang(conversation!!, selectedLang)
+            }
+        }
     }
 }
